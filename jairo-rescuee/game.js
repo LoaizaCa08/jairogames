@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // JAIRO RESCUEE — MOTOR GRÁFICO HD, SPRITES VECTORIALES Y CONTROL RESPONSIVE
 // ============================================================================
 
@@ -309,7 +309,7 @@ function buildLevelWorld(levelNum) {
 
   // Arena final del nivel
   const arenaX = endSectionX + 40;
-  const arenaW = 560;
+  const arenaW = 460;
   world.platforms.push({
     x: arenaX,
     y: 425,
@@ -318,10 +318,11 @@ function buildLevelWorld(levelNum) {
     type: cfg.slippery ? 'oil_ground' : 'ground'
   });
 
-  world.platforms.push({ x: arenaX + 65, y: 305, w: 130, h: 22, type: 'plat' });
-  world.platforms.push({ x: arenaX + 315, y: 305, w: 130, h: 22, type: 'plat' });
+  world.platforms.push({ x: arenaX + 45, y: 305, w: 120, h: 22, type: 'plat' });
+  world.platforms.push({ x: arenaX + 220, y: 305, w: 120, h: 22, type: 'plat' });
 
-  world.goalX = arenaX + arenaW - 95;
+  // La meta queda cómodamente dentro de la pantalla y el jugador la alcanza sin topar con paredes
+  world.goalX = cfg.length - 130;
 
   if (cfg.boss) {
     world.boss = {
@@ -336,13 +337,13 @@ function buildLevelWorld(levelNum) {
       maxHp: cfg.boss.hp,
       color: cfg.boss.color,
       quote: cfg.boss.quote,
-      x: arenaX + 340,
+      x: arenaX + 240,
       y: 315,
       w: 84,
       h: 110,
       vx: -2.2,
-      minX: arenaX + 55,
-      maxX: arenaX + arenaW - 135,
+      minX: arenaX + 45,
+      maxX: cfg.length - 170,
       attackTimer: 72,
       jumpTimer: 115,
       vy: 0,
@@ -806,15 +807,19 @@ function updateWorld() {
     if (ft.life <= 0) world.floatingTexts.splice(i, 1);
   }
 
-  if (Math.abs(p.x - world.goalX) < 52 && p.y > 240) {
+  // Detección de meta / portal o jaula de Jairo
+  const distGoalX = Math.abs((p.x + p.w / 2) - world.goalX);
+  if (distGoalX < 65) {
     if (world.boss && !world.boss.defeated) {
-      world.floatingTexts.push({
-        x: world.goalX - 50,
-        y: 300,
-        text: '🔒 ¡Primero termina con la jefa, no te apures!',
-        color: '#fca5a5',
-        life: 20
-      });
+      if (world.tick % 45 === 0) {
+        world.floatingTexts.push({
+          x: world.goalX - 60,
+          y: 290,
+          text: '🔒 ¡Primero termina con la jefa, no te apures!',
+          color: '#fca5a5',
+          life: 30
+        });
+      }
     } else {
       completeCurrentLevel();
     }
@@ -1016,7 +1021,7 @@ function drawParallaxBackground(cfg) {
     let subSign = 'CASA DE SANDRA (CHISMOSA)';
     if (cfg.theme === 'cinema') {
       titleSign = '🍿 CINE VIP: SALA 4';
-      subSign = 'ÚLTIMA FILA: J & JAVIER 💋';
+      subSign = 'ÚLTIMA FILA: JAVIER & JAIRO 💋';
     } else if (cfg.theme === 'sanjorge') {
       titleSign = '⛰️ BARRIO SAN JORGE';
       subSign = 'CUESTAS QUE DAN CALOR';

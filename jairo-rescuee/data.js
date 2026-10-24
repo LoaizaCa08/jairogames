@@ -33,11 +33,11 @@ const RESCUE_CHARACTERS = {
   javier: {
     id: 'javier',
     name: 'Javier',
-    role: 'Secuestradora y "Amiga" de Cine de J',
+    role: 'Secuestradora y "Novia" de Cine de Jairo',
     color: '#ec4899',
-    badge: '🍿 Jefa del Cine',
-    bio: 'La mejor amiga de J para ir al cine, siempre en la última fila. Sandra jura que "esos dos parecen novios" y que nadie ve una película completa desde ahí. Secuestró a Jairo por celos de que J le dio plantón.',
-    traits: ['Última Fila del Cine', 'Sandra Dice que Son Novios', 'Cañón de Crispetas con Mantequilla']
+    badge: '🍿 La Pareja de Jairo en el Cine',
+    bio: 'La mejor amiga de Jairo (el perro Pomerania) para ir al cine, siempre en la última fila con el perro en brazos dándole crispetas en la boquita. Sandra jura que "Javier y Jairo parecen novios" porque no se pierden ni un estreno juntos. Secuestró a Jairo para tenerlo en exclusividad para sus funciones de cine privadas.',
+    traits: ['Mejor Amiga de Cine de JAIRO', 'Sandra Dice que Jairo y Ella Parecen Novios', 'Balde de Crispetas con Mantequilla']
   },
   gael: {
     id: 'gael',
@@ -116,24 +116,24 @@ const RESCUE_LEVELS = [
       {
         speaker: 'sandra',
         name: 'Sandra (Mamá de J)',
-        text: '«¡J, levántate ya! ¡Se llevaron a Jairo y solo dejaron crispetas con mantequilla y un labial rojo en la alfombra! ¿Qué clase de secuestradoras dejan pistas tan sucias?»'
+        text: '«¡J, levántate ya! ¡Entraron a la sala de Virocentro y se robaron a Jairo! Dejaron crispetas regadas... ¡Seguro fue Javier, esa mujer que se lleva a Jairo a la última fila del cine! ¡Hasta parecen novios esos dos!»'
       },
       {
         speaker: 'j',
         name: 'J',
-        text: '«¡¿Se llevaron a mi perrito?! Quien se meta con Jairo se las ve conmigo. Y con mi mano, que dicen que es larga.»'
+        text: '«¡¿Javier se llevó a mi Pomerania?! ¡Esa loca cree que Jairo es su novio de cine! Voy a saltar por todos los techos hasta quitárselo.»'
       },
       {
         speaker: 'sandra',
         name: 'Sandra (Mamá de J)',
-        text: '«Más te vale que vayas a rescatar al perro y no a meterte a la última fila del cine con Javier. ¡Ustedes dos ya parecen novios, no me hagas pasar vergüenza!»'
+        text: '«¡Corre, mijo! Que capaz y le compra combo grande con gaseosa y me le indigesta al perro en plena función de novios.»'
       }
     ],
     outroDialogue: [
       {
         speaker: 'j',
         name: 'J',
-        text: '«Encontré el collar de Jairo, una boleta de cine VIP y un tanga de leopardo. El rastro huele a perfume caro. Seguimos por la avenida.»'
+        text: '«Encontré el collar de Jairo, una boleta de cine VIP para \"Javier y su bombón Jairo\", y un rastro de mantequilla derretida. Seguimos por la avenida.»'
       }
     ]
   },
@@ -163,7 +163,7 @@ const RESCUE_LEVELS = [
       {
         speaker: 'sandra',
         name: 'Sandra (Audio de WhatsApp)',
-        text: '«📱 Mijo, me dijeron que entraste corriendo al cine... ¿otra vez con Javier? Esa pareja no se disimula ni con crispetas.»'
+        text: '«📱 Mijo, me confirmaron que vieron a Javier entrando corriendo al cine con Jairo en brazos... ¡hasta boleta doble compró para ella y el perro! ¡Esa pareja de novios me tiene escandalizada!»'
       }
     ]
   },
@@ -175,10 +175,10 @@ const RESCUE_LEVELS = [
     ally: null,
     boss: {
       id: 'javier',
-      name: 'JAVIER (La "Novia" del Cine)',
+      name: 'JAVIER (La "Novia" de Cine de Jairo)',
       hp: 18,
       color: '#ec4899',
-      quote: '«¡Me dejaste plantada en el estreno, J! ¡Sandra tiene razón, parecemos novios peleados!»'
+      quote: '«¡Jairo es mi pareja de cine favorita, J! ¡Sandra tiene razón, parecemos novios y nadie nos va a separar!»'
     },
     slippery: false,
     length: 2400,
@@ -186,25 +186,25 @@ const RESCUE_LEVELS = [
     introDialogue: [
       {
         speaker: 'javier',
-        name: 'Javier (Mejor Amiga de Cine)',
-        text: '«Hola, mi amor... digo, J. Compré combo doble para la última fila como siempre, pero me dejaste esperando con la mantequilla caliente. ¡Por eso me alié con Jair y me llevé a tu perro!»'
+        name: 'Javier (La "Novia" de Cine de Jairo)',
+        text: '«¡Hola, J! Ni te acerques a mi amorcito. Jairo y yo tenemos combo doble para la última fila. Le compré crispetas con mantequilla tibia y se las doy grano a grano en su hociquito. ¡Por eso me alié con Jair y me lo traje al cine!»'
       },
       {
         speaker: 'sandra',
         name: 'Sandra (Llamada en Altavoz)',
-        text: '«¡Lo sabía! ¡Pelea de novios en pleno cine! J, rescata a Jairo y luego resuelven su drama en terapia de pareja.»'
+        text: '«¡Lo sabía! ¡Javier y Jairo en la última fila como dos novios en luna de miel! ¡J, rescata al perro antes de que le den gaseosa con pitillo!»'
       },
       {
         speaker: 'j',
         name: 'J',
-        text: '«¡Cuáles novios, Javier! ¡Dime dónde está Jairo o te dejo sin crispetas, sin gloss y sin tercera fila!»'
+        text: '«¡Javier, suelta a Jairo! ¡Mi perro no es tu novio ni tu cita de cine! ¡Devuélvelo ya o te desbarato ese cañón de crispetas!»'
       }
     ],
     outroDialogue: [
       {
         speaker: 'javier',
         name: 'Javier (Derrotada)',
-        text: '«Ay, está bien, perdón. Jair se llevó a Jairo para San Jorge... pero el viernes sí hay cine, ¿verdad? Llevo mi mejor perfume.»'
+        text: '«¡Ay, está bien, perdón... pero es que Jairo es tan suave y come crispetas tan rico en la oscuridad! Jair se lo llevó a la fuerza para San Jorge... ¡prométeme que cuando lo rescates me dejarás llevar a mi noviecito Jairo a la función del domingo!»'
       }
     ]
   },
@@ -417,17 +417,17 @@ const RESCUE_LEVELS = [
       {
         speaker: 'javier',
         name: 'Javier',
-        text: '«Sorpresa, mi vida. Jair me prestó un traje blindado rosa de Cine VIP y Derian dejó el piso hecho una pista de patinaje aceitosa. Esta vez no te escapas de nuestra cita.»'
+        text: '«¡Sorpresa, J! Jair me prestó armadura rosa en Virocasa y Derian engrasó el piso. ¡Si no me firmas la custodia compartida para llevar a Jairo a todas las funciones de cine como mi novio oficial, de aquí no sale nadie!»'
       },
       {
         speaker: 'da',
         name: 'Da',
-        text: '«Javier, por favor, estás pisando mi sala con tacones. Esa alfombra la pagamos entre J y yo. ¡Fuera!»'
+        text: '«Javier, estás pisando mi sala con tacones y reclamando un perro Pomerania como si fuera tu pareja. ¡Búscate un novio humano y sal de Virocasa!»'
       },
       {
         speaker: 'sandra',
         name: 'Sandra',
-        text: '«¡Virgen del Carmen! Javier en Virocasa peleando con J y con Da sobre un charco de aceite. Eso ya no es secuestro, es una escena para mayores de 18.»'
+        text: '«¡Virgen del Carmen! Javier haciendo berrinche en Virocasa porque quiere ser la novia del perro. ¡Esa mujer necesita ayuda urgente!»'
       }
     ],
     outroDialogue: [
