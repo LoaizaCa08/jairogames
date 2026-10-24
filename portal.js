@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (secretsEl && Array.isArray(secrets)) {
       secretsEl.textContent = `🥚 Secretos: ${secrets.length}/7`;
     }
+
+    const jrLevel = localStorage.getItem('jairorescue_max_level') || '1';
+    const jrBones = localStorage.getItem('jairorescue_bones') || '0';
+    const jrLevelEl = document.getElementById('jr-level-stat');
+    const jrBonesEl = document.getElementById('jr-bones-stat');
+    if (jrLevelEl) jrLevelEl.textContent = `🗺️ Nivel: ${jrLevel}/10`;
+    if (jrBonesEl) jrBonesEl.textContent = `🦴 Huesos: ${jrBones}`;
   } catch (e) {
     // Ignorar errores de almacenamiento local
   }

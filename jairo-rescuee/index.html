@@ -3,59 +3,224 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>JAIRO RESCUEE — JAIROGAMES</title>
-  <link rel="stylesheet" href="styles.css?v=1" />
+  <title>JAIRO RESCUEE — Arcade de 10 Niveles | JAIROGAMES</title>
+  <link rel="stylesheet" href="styles.css?v=2" />
 </head>
 <body>
+  <!-- Notificaciones Toast -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- BARRA SUPERIOR (HUD) -->
   <header class="rescue-topbar">
-    <a href="../index.html" class="btn-back-portal" title="Volver a la portada de JAIROGAMES">
-      🕹️ ← Volver a JAIROGAMES
-    </a>
-    <div class="rescue-badge">🐾 JAIROGAMES • JUEGO #2</div>
+    <div class="topbar-left">
+      <a href="../index.html" class="hud-btn hud-btn-portal" title="Volver a la portada de JAIROGAMES">
+        <span>🕹️</span>
+        <span class="btn-label">JAIROGAMES</span>
+      </a>
+      <button id="btn-home-menu" class="hud-btn" title="Volver al Menú de Jairo Rescuee">
+        <span>🏠</span>
+        <span class="btn-label">Menú</span>
+      </button>
+      <div class="location-pill" id="hud-level-badge">
+        📍 NIVEL 1/10 • VIROCENTRO
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div class="hud-stat-pill" title="Vidas de J">
+        <span id="hud-hearts">❤️❤️❤️</span>
+      </div>
+      <div class="hud-stat-pill pill-gold" title="Huesos Dorados de Jairo recolectados">
+        🦴 <span id="hud-bones">0</span>
+      </div>
+      <button id="btn-open-shop" class="hud-btn hud-btn-gold" title="Mejoras con Gael, Derian y Sandra">
+        <span>🧴</span>
+        <span class="btn-label">Mejoras</span>
+      </button>
+      <button id="btn-open-chars" class="hud-btn" title="Ver Nuevos Personajes y Roles">
+        <span>📖</span>
+        <span class="btn-label">Personajes</span>
+      </button>
+      <button id="btn-sound" class="hud-btn" title="Activar/Desactivar Audio Arcade">
+        🔊
+      </button>
+    </div>
   </header>
 
-  <main class="rescue-shell">
-    <div class="rescue-card">
-      <div class="rescue-hero-art" id="jairo-hero-avatar" title="¡Toca a Jairo!">
-        <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-          <path d="M40 165 Q20 215 15 235 L185 235 Q180 215 160 165 Z" fill="#ef4444" stroke="#fca5a5" stroke-width="2.5"/>
-          <circle cx="100" cy="150" r="58" fill="#f59e0b" stroke="#fde68a" stroke-width="4"/>
-          <circle cx="65" cy="125" r="35" fill="#fbbf24"/>
-          <circle cx="135" cy="125" r="35" fill="#fbbf24"/>
-          <circle cx="100" cy="115" r="46" fill="#fbbf24" stroke="#fef3c7" stroke-width="3"/>
-          <polygon points="62,84 74,48 92,76" fill="#d97706" stroke="#fde68a" stroke-width="2"/>
-          <polygon points="138,84 126,48 108,76" fill="#d97706" stroke="#fde68a" stroke-width="2"/>
-          <ellipse cx="100" cy="162" rx="34" ry="26" fill="#fffbeb"/>
-          <circle cx="84" cy="108" r="6" fill="#1e293b"/>
-          <circle cx="116" cy="108" r="6" fill="#1e293b"/>
-          <circle cx="86" cy="106" r="2" fill="#fff"/>
-          <circle cx="118" cy="106" r="2" fill="#fff"/>
-          <ellipse cx="100" cy="118" rx="7" ry="5" fill="#1e293b"/>
-          <path d="M94 127 Q100 142 106 127 Z" fill="#fb7185"/>
-        </svg>
+  <!-- PANTALLA DE MENÚ PRINCIPAL Y SELECTOR DE 10 NIVELES -->
+  <main id="menu-screen" class="menu-screen">
+    <div class="menu-shell">
+      <!-- Columna Izquierda: Historia, Héroe y Controles Principales -->
+      <div class="menu-left">
+        <div class="menu-badges">
+          <span class="tag-arcade">🕹️ ARCADE DE PLATAFORMAS • 10 NIVELES</span>
+          <span class="tag-loc">📍 VIROCENTRO • CINE • SAN JORGE • VIROCASA</span>
+        </div>
+
+        <h1 class="game-main-title">JAIRO <span>RESCUEE</span></h1>
+        <p class="game-main-desc">
+          ¡<strong>Jair</strong> y <strong>Javier</strong> (el amigo del cine de quien <strong>Sandra</strong> dice que parece novio de J) secuestraron a <strong>Jairo el Pomerania</strong>! Recorre <strong>Virocentro</strong>, únete en <strong>San Jorge</strong> al webcamer <strong>Gael</strong>, resbala en el aceite sospechoso de <strong>Derian</strong> y rescata a Jairo en la batalla final de <strong>Virocasa</strong>.
+        </p>
+
+        <!-- Tarjeta de Aliados y Villanos -->
+        <div class="story-highlights">
+          <div class="highlight-item">
+            <span class="hi-icon">🍿</span>
+            <div>
+              <strong>Javier (Secuestrador del Cine):</strong>
+              <small>Sandra jura que él y J son novios por ir juntos a cine.</small>
+            </div>
+          </div>
+          <div class="highlight-item">
+            <span class="hi-icon">🎥</span>
+            <div>
+              <strong>Gael (Aliado Webcamer en San Jorge):</strong>
+              <small>Se une a J en el Nivel 5 con su Aro de Luz LED y Lluvia de Tokens.</small>
+            </div>
+          </div>
+          <div class="highlight-item">
+            <span class="hi-icon">🧴</span>
+            <div>
+              <strong>Derian (Masajes a Jairo en Aceite):</strong>
+              <small>Le da masajes en aceite a Jairo y Sandra piensa que hacen otra cosa.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-cta-row">
+          <button id="btn-play-continue" class="btn-play-main">
+            <span>🐾 INICIAR / CONTINUAR RESCATE</span>
+            <small id="btn-play-sub">Empezar desde el Nivel 1 en Virocentro ▸</small>
+          </button>
+          <div class="menu-sub-btns">
+            <button id="btn-menu-chars" class="btn-sec">📖 Nuevos Personajes (7)</button>
+            <button id="btn-menu-shop" class="btn-sec">🧴 Tienda de Aceite y Luces</button>
+            <button id="btn-unlock-all" class="btn-sec" title="Desbloquear los 10 niveles para probar cualquiera">🔓 Desbloquear 10 Niveles</button>
+          </div>
+        </div>
       </div>
 
-      <span class="status-pill">🚧 PROYECTO INICIALIZADO • LISTO PARA DESARROLLO</span>
-      <h1 class="rescue-title">JAIRO <span>RESCUEE</span></h1>
-      <p class="rescue-desc">
-        Estructura base de <strong>Jairo Rescuee</strong> creada y conectada al portal principal de <strong>JAIROGAMES</strong>.
-      </p>
-
-      <div id="game-stage" class="rescue-stage">
-        <p id="jairo-bark-msg">🐶 «¡Guau! Estoy listo para que empecemos a armar mi misión de rescate.»</p>
+      <!-- Columna Derecha: Selector de los 10 Niveles -->
+      <div class="menu-right">
+        <div class="levels-header">
+          <h2>🗺️ MAPA DE LA MISIÓN (10 NIVELES)</h2>
+          <span id="progress-summary" class="progress-pill">Progreso: Nivel 1/10</span>
+        </div>
+        <div id="levels-grid" class="levels-grid"></div>
       </div>
 
-      <div class="rescue-actions">
-        <button id="btn-test-bark" class="btn-primary-rescue" type="button">
-          🐾 ¡Ladrido de Jairo!
-        </button>
-        <a href="../index.html" class="btn-secondary-rescue">
-          🕹️ Ir a la Portada JAIROGAMES
-        </a>
+      <!-- Barra inferior con vista rápida de los personajes -->
+      <div class="cast-strip-wrap">
+        <div class="cast-strip-title">ELENCO DE JAIRO RESCUEE (TOCA UN PERSONAJE PARA VER SU HISTORIA):</div>
+        <div id="cast-strip" class="cast-strip"></div>
       </div>
     </div>
   </main>
 
-  <script src="game.js?v=1"></script>
+  <!-- PANTALLA DE JUEGO ARCADE (CANVAS + DIÁLOGOS + CONTROLES) -->
+  <section id="play-screen" class="play-screen hidden">
+    <div class="arcade-stage-wrap">
+      <!-- Barra de Vida de Jefe (Javier / Mega-Dron / Jair) -->
+      <div id="boss-hud" class="boss-hud hidden">
+        <div class="boss-info">
+          <span id="boss-name">😈 JEFE: JAIR</span>
+          <span id="boss-hp-text">100%</span>
+        </div>
+        <div class="boss-bar-bg">
+          <div id="boss-bar-fill" class="boss-bar-fill" style="width: 100%"></div>
+        </div>
+      </div>
+
+      <!-- Lienzo del Juego Arcade -->
+      <div class="canvas-container">
+        <canvas id="rescue-canvas" width="960" height="500"></canvas>
+
+        <!-- Cuadro de Diálogo de Historia (Intro / Outro de Nivel) -->
+        <div id="dialogue-overlay" class="dialogue-overlay hidden">
+          <div class="dialogue-card">
+            <div id="dlg-portrait" class="dlg-portrait"></div>
+            <div class="dlg-content">
+              <div class="dlg-top-row">
+                <span id="dlg-speaker" class="dlg-speaker">SANDRA</span>
+                <button id="btn-skip-dlg" class="btn-skip-dlg" type="button">Saltar ⏭</button>
+              </div>
+              <p id="dlg-text" class="dlg-text"></p>
+              <div class="dlg-footer">
+                <button id="btn-next-dlg" class="btn-next-dlg" type="button">Continuar ▸</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controles Táctiles / Mouse y Ayuda de Teclado -->
+      <div class="controls-bar">
+        <div class="touch-dpad">
+          <button id="ctrl-left" class="ctrl-btn" type="button">◀ IZQ</button>
+          <button id="ctrl-right" class="ctrl-btn" type="button">DER ▶</button>
+        </div>
+
+        <div class="keyboard-hints">
+          <span>⌨️ <strong>[A/D o ←/→]</strong> Mover</span>
+          <span><strong>[W / Espacio]</strong> Doble Salto</span>
+          <span><strong>[J / Z]</strong> Disparar</span>
+          <span><strong>[K / X]</strong> Poder Gael + Aceite Derian</span>
+        </div>
+
+        <div class="touch-actions">
+          <button id="ctrl-jump" class="ctrl-btn ctrl-jump" type="button">▲ SALTAR</button>
+          <button id="ctrl-shoot" class="ctrl-btn ctrl-shoot" type="button">🔥 ATACAR</button>
+          <button id="ctrl-special" class="ctrl-btn ctrl-special" type="button">🎥 PODER (<span id="special-cd-label">LISTO</span>)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: EXPEDIENTES DE LOS NUEVOS PERSONAJES -->
+  <div id="modal-chars" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>📖 Personajes de Jairo Rescuee</h2>
+        <button class="modal-close" data-close="modal-chars">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="chars-grid" class="chars-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TIENDA DE MEJORAS (GAEL, DERIAN Y SANDRA) -->
+  <div id="modal-shop" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2>🧴 Laboratorio de Mejoras (San Jorge & Virocentro)</h2>
+          <small style="color: #fde047; font-weight: 800;">🦴 Huesos Dorados disponibles: <span id="shop-bones-count">0</span></small>
+        </div>
+        <button class="modal-close" data-close="modal-shop">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">Usa los huesos dorados de Jairo que recoges en los niveles para mejorar el Aro LED de Gael, el Aceite Turbo de Derian y las vidas de J:</p>
+        <div id="shop-grid" class="shop-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FIN DE NIVEL / VICTORIA / DERROTA -->
+  <div id="modal-result" class="modal-backdrop hidden">
+    <div class="modal-card result-card">
+      <div id="result-art" class="result-art"></div>
+      <h2 id="result-title">¡NIVEL COMPLETADO!</h2>
+      <p id="result-desc" class="result-desc"></p>
+      <div class="result-actions">
+        <button id="btn-result-next" class="btn-play-main" type="button">SIGUIENTE NIVEL ▸</button>
+        <button id="btn-result-retry" class="btn-sec" type="button">🔄 Reintentar Nivel</button>
+        <button id="btn-result-menu" class="btn-sec" type="button">🗺️ Mapa de Niveles</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js?v=2"></script>
+  <script src="game.js?v=2"></script>
 </body>
 </html>

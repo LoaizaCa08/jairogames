@@ -4,7 +4,7 @@ set -euo pipefail
 # Run as root from an uploaded checkout. Public portal and game folders are served.
 [[ $EUID -eq 0 ]] || { echo 'Ejecuta este script como root.' >&2; exit 1; }
 SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-for file in index.html portal.css portal.js call-of-j/index.html call-of-j/styles.css call-of-j/data.js call-of-j/game.js jairo-rescuee/index.html jairo-rescuee/styles.css jairo-rescuee/game.js; do
+for file in index.html portal.css portal.js call-of-j/index.html call-of-j/styles.css call-of-j/data.js call-of-j/game.js jairo-rescuee/index.html jairo-rescuee/styles.css jairo-rescuee/data.js jairo-rescuee/game.js; do
     [[ -s "$SOURCE/$file" ]] || { echo "Falta $file" >&2; exit 1; }
 done
 
@@ -14,7 +14,7 @@ apt-get install -y nginx certbot python3-certbot-nginx ca-certificates
 
 RELEASE="/var/www/jairogames/releases/$(date -u +%Y%m%dT%H%M%S)-$$"
 install -d -m 755 "$RELEASE" "$RELEASE/call-of-j" "$RELEASE/jairo-rescuee"
-for file in index.html portal.css portal.js call-of-j/index.html call-of-j/styles.css call-of-j/data.js call-of-j/game.js jairo-rescuee/index.html jairo-rescuee/styles.css jairo-rescuee/game.js; do
+for file in index.html portal.css portal.js call-of-j/index.html call-of-j/styles.css call-of-j/data.js call-of-j/game.js jairo-rescuee/index.html jairo-rescuee/styles.css jairo-rescuee/data.js jairo-rescuee/game.js; do
     install -m 644 "$SOURCE/$file" "$RELEASE/$file"
 done
 ln -s "$RELEASE" /var/www/jairogames/current.next

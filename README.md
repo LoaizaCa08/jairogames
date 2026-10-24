@@ -8,7 +8,7 @@ Sitio: https://jairogames.online
 
 - `/` (`index.html`, `portal.css`, `portal.js`): Portada principal de **JAIROGAMES** con el selector de juegos.
 - `/call-of-j/`: **1. Call of J** — Novela visual interactiva y minijuegos (creado y completo).
-- `/jairo-rescuee/`: **2. Jairo Rescuee** — Segundo juego del portal.
+- `/jairo-rescuee/`: **2. Jairo Rescuee** — Juego arcade de plataformas y acción lateral con 10 niveles (Virocentro, El Cine, San Jorge y Virocasa).
 
 ## Desarrollo local
 
@@ -20,6 +20,7 @@ Comprobación de sintaxis con Node.js:
 node --check portal.js
 node --check call-of-j/data.js
 node --check call-of-j/game.js
+node --check jairo-rescuee/data.js
 node --check jairo-rescuee/game.js
 ```
 
