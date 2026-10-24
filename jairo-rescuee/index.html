@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>JAIRO RESCUEE — JAIROGAMES</title>
+  <link rel="stylesheet" href="styles.css?v=1" />
+</head>
+<body>
+  <header class="rescue-topbar">
+    <a href="../index.html" class="btn-back-portal" title="Volver a la portada de JAIROGAMES">
+      🕹️ ← Volver a JAIROGAMES
+    </a>
+    <div class="rescue-badge">🐾 JAIROGAMES • JUEGO #2</div>
+  </header>
+
+  <main class="rescue-shell">
+    <div class="rescue-card">
+      <div class="rescue-hero-art" id="jairo-hero-avatar" title="¡Toca a Jairo!">
+        <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+          <path d="M40 165 Q20 215 15 235 L185 235 Q180 215 160 165 Z" fill="#ef4444" stroke="#fca5a5" stroke-width="2.5"/>
+          <circle cx="100" cy="150" r="58" fill="#f59e0b" stroke="#fde68a" stroke-width="4"/>
+          <circle cx="65" cy="125" r="35" fill="#fbbf24"/>
+          <circle cx="135" cy="125" r="35" fill="#fbbf24"/>
+          <circle cx="100" cy="115" r="46" fill="#fbbf24" stroke="#fef3c7" stroke-width="3"/>
+          <polygon points="62,84 74,48 92,76" fill="#d97706" stroke="#fde68a" stroke-width="2"/>
+          <polygon points="138,84 126,48 108,76" fill="#d97706" stroke="#fde68a" stroke-width="2"/>
+          <ellipse cx="100" cy="162" rx="34" ry="26" fill="#fffbeb"/>
+          <circle cx="84" cy="108" r="6" fill="#1e293b"/>
+          <circle cx="116" cy="108" r="6" fill="#1e293b"/>
+          <circle cx="86" cy="106" r="2" fill="#fff"/>
+          <circle cx="118" cy="106" r="2" fill="#fff"/>
+          <ellipse cx="100" cy="118" rx="7" ry="5" fill="#1e293b"/>
+          <path d="M94 127 Q100 142 106 127 Z" fill="#fb7185"/>
+        </svg>
+      </div>
+
+      <span class="status-pill">🚧 PROYECTO INICIALIZADO • LISTO PARA DESARROLLO</span>
+      <h1 class="rescue-title">JAIRO <span>RESCUEE</span></h1>
+      <p class="rescue-desc">
+        Estructura base de <strong>Jairo Rescuee</strong> creada y conectada al portal principal de <strong>JAIROGAMES</strong>.
+      </p>
+
+      <div id="game-stage" class="rescue-stage">
+        <p id="jairo-bark-msg">🐶 «¡Guau! Estoy listo para que empecemos a armar mi misión de rescate.»</p>
+      </div>
+
+      <div class="rescue-actions">
+        <button id="btn-test-bark" class="btn-primary-rescue" type="button">
+          🐾 ¡Ladrido de Jairo!
+        </button>
+        <a href="../index.html" class="btn-secondary-rescue">
+          🕹️ Ir a la Portada JAIROGAMES
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script src="game.js?v=1"></script>
+</body>
+</html>

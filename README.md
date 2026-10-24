@@ -1,8 +1,14 @@
-# CALL OF J
+# JAIROGAMES
 
-Novela visual interactiva en HTML, CSS y JavaScript, sin dependencias de compilación ni base de datos. El progreso se guarda en el navegador mediante `localStorage`.
+Portal web de juegos en HTML, CSS y JavaScript, sin dependencias de compilación ni base de datos. El progreso se guarda en el navegador mediante `localStorage`.
 
 Sitio: https://jairogames.online
+
+## Estructura del Proyecto
+
+- `/` (`index.html`, `portal.css`, `portal.js`): Portada principal de **JAIROGAMES** con el selector de juegos.
+- `/call-of-j/`: **1. Call of J** — Novela visual interactiva y minijuegos (creado y completo).
+- `/jairo-rescuee/`: **2. Jairo Rescuee** — Segundo juego del portal.
 
 ## Desarrollo local
 
@@ -11,8 +17,10 @@ Abre `index.html` en un navegador, o sirve esta carpeta con cualquier servidor H
 Comprobación de sintaxis con Node.js:
 
 ```sh
-node --check data.js
-node --check game.js
+node --check portal.js
+node --check call-of-j/data.js
+node --check call-of-j/game.js
+node --check jairo-rescuee/game.js
 ```
 
 ## Despliegue en el VPS

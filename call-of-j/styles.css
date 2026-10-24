@@ -262,6 +262,18 @@ html, body {
   transform: scale(1.12);
 }
 
+.hud-btn-portal {
+  text-decoration: none;
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.45);
+  color: #fde047;
+}
+
+.hud-btn-portal:hover {
+  background: rgba(251, 191, 36, 0.28);
+  border-color: #fbbf24;
+}
+
 .hud-btn-icon {
   padding: 7px 9px;
 }
@@ -477,6 +489,28 @@ html, body {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+
+.portal-back-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #fde047;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.5);
+  padding: 5px 12px;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.portal-back-pill:hover {
+  background: rgba(251, 191, 36, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.35);
 }
 
 .title-tag {

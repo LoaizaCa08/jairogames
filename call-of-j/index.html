@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CALL OF J — Novela Visual Interactiva</title>
+  <link rel="stylesheet" href="styles.css?v=5" />
+</head>
+<body>
+  <!-- Fondo dinámico de escenarios -->
+  <div id="scene-background" class="bg-menu">
+    <div class="bg-overlay"></div>
+    <div id="scene-art" class="scene-art"></div>
+    <div id="fx-layer" class="fx-layer"></div>
+  </div>
+
+  <!-- Contenedor de notificaciones / logros picantes -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Barra Superior (HUD de 2 Niveles con Iconos Vectoriales SVG) -->
+  <header id="top-bar" class="top-bar hidden">
+    <div class="top-bar-main">
+      <div class="hud-left">
+        <a href="../index.html" class="hud-btn hud-btn-portal" title="Volver a la portada de JAIROGAMES">
+          <span>🕹️</span>
+          <span class="btn-label">JAIROGAMES</span>
+        </a>
+
+        <button id="btn-menu" class="hud-btn hud-btn-menu" title="Volver al Menú Principal">
+          <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="16" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+          <span class="btn-label">Menú</span>
+        </button>
+
+        <div class="location-badge" id="hud-location" title="Pista: Toca 3 veces seguidas este letrero...">
+          <svg class="ui-icon loc-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11z" />
+            <circle cx="12" cy="10" r="2.5" fill="currentColor" />
+          </svg>
+          <span id="location-name">EL CABLE → 2150</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <button id="btn-bag-hud" class="hud-btn hud-btn-bag" title="Bolsillo de J, Tienda y Minijuegos">
+          <svg class="ui-icon icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="7" width="18" height="13" rx="3" />
+            <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            <circle cx="16" cy="13.5" r="1.5" fill="currentColor" />
+          </svg>
+          <span class="btn-label">Bolsillo</span>
+          <span id="hud-money" class="hud-pill-val">$60k</span>
+        </button>
+
+        <button id="btn-phone-hud" class="hud-btn hud-btn-phone" title="Ver el Grupo de WhatsApp de la Noche">
+          <svg class="ui-icon icon-emerald" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+          </svg>
+          <span class="btn-label">WhatsApp</span>
+          <span id="phone-badge-hud" class="phone-notif-dot">3</span>
+        </button>
+
+        <button id="btn-secrets-hud" class="hud-btn hud-btn-secret" title="Easter Eggs y Secretos">
+          <svg class="ui-icon icon-purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          <span class="btn-label-xl">Secretos</span>
+          <span id="secrets-count-hud" class="hud-pill-val">0/7</span>
+        </button>
+
+        <button id="btn-lore" class="hud-btn" title="Ver Personajes">
+          <svg class="ui-icon icon-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span class="btn-label-xl">Personajes</span>
+        </button>
+
+        <button id="btn-map" class="hud-btn" title="Ver Escenarios">
+          <svg class="ui-icon icon-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+            <line x1="8" y1="2" x2="8" y2="18" />
+            <line x1="16" y1="6" x2="16" y2="22" />
+          </svg>
+          <span class="btn-label-xl">Escenarios</span>
+        </button>
+
+        <button id="btn-music" class="hud-btn hud-btn-icon" title="Activar/Desactivar Música de Rumba (2150 Beat)">
+          <svg class="ui-icon icon-pink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13" />
+            <circle cx="6" cy="18" r="3" />
+            <circle cx="18" cy="16" r="3" />
+          </svg>
+        </button>
+
+        <button id="btn-audio" class="hud-btn hud-btn-icon" title="Activar/Desactivar Sonidos">
+          <svg class="ui-icon icon-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub-barra flotante de Estadísticas con Iconos Vectoriales -->
+    <div class="hud-stats-dock">
+      <div class="stat-pill stat-pill-fire" title="Nivel de Calentura y Picante de J">
+        <span class="stat-icon-wrap icon-fire">
+          <svg class="stat-svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2c1.8 3.2 4.5 5.6 4.5 9.5 0 1.4-.5 2.7-1.3 3.7.8-.4 1.8-1.4 1.8-3.2 2.2 1.8 3 4.3 3 6.5 0 4.1-3.6 7.5-8 7.5s-8-3.4-8-7.5c0-3.7 2.5-6.6 5.2-9.3-.4 1.6.2 3.1 1.3 3.8-.5-3.2.5-7.4 1.5-11z"/>
+          </svg>
+        </span>
+        <span class="stat-label">Calentura</span>
+        <div class="stat-bar"><div id="bar-parche" class="stat-fill fill-fire" style="width: 25%"></div></div>
+        <span id="val-parche" class="stat-val">25%</span>
+      </div>
+
+      <div class="stat-pill stat-pill-spirit" title="Camino del Bien (Guía de Diegui para Da)">
+        <span class="stat-icon-wrap icon-spirit">
+          <svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 10h.01M15 10h.01M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>
+          </svg>
+        </span>
+        <span class="stat-label">Bien</span>
+        <div class="stat-bar"><div id="bar-diegui" class="stat-fill fill-spirit" style="width: 50%"></div></div>
+        <span id="val-diegui" class="stat-val">50%</span>
+      </div>
+
+      <div class="stat-pill stat-pill-shield" title="Paciencia de Che">
+        <span class="stat-icon-wrap icon-shield">
+          <svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </span>
+        <span class="stat-label">Control</span>
+        <div class="stat-bar"><div id="bar-che" class="stat-fill fill-shield" style="width: 70%"></div></div>
+        <span id="val-che" class="stat-val">70%</span>
+      </div>
+
+      <div class="stat-pill stat-pill-alert" title="Peligro en Virocentro">
+        <span class="stat-icon-wrap icon-alert">
+          <svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </span>
+        <span class="stat-label">Alerta</span>
+        <div class="stat-bar"><div id="bar-alerta" class="stat-fill fill-alert" style="width: 15%"></div></div>
+        <span id="val-alerta" class="stat-val">15%</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PANTALLA DE INICIO (HOME PICANTE Y TEMÁTICO) -->
+  <main id="title-screen" class="title-screen">
+    <div class="home-shell">
+      <!-- Columna Izquierda: Identidad picante, acción principal y controles -->
+      <div class="home-hero-left">
+        <div class="home-badges-row">
+          <a href="../index.html" class="portal-back-pill" title="Volver al selector de juegos JAIROGAMES">🕹️ ← JAIROGAMES</a>
+          <span class="title-tag">🔥 +18 EDICIÓN PICANTE</span>
+          <span class="title-subtag">🥃 EL CABLE • VIOLETA • 2150 • VIROCASA</span>
+        </div>
+
+        <h1 class="game-title">CALL OF <span id="secret-j-letter" title="¿Qué pasa si tocas la J 5 veces?">J</span></h1>
+        <p class="game-subtitle">
+          Fingió cuidar a <strong>Da</strong> en El Cable, se prendió a punta de <strong>guaritos en Violeta</strong> y terminó <strong>mandándole mano a Cataleya</strong> en lo oscuro de <strong>2150</strong>.
+        </p>
+
+        <!-- Barra de calentura interactiva del Home -->
+        <div class="home-heat-widget">
+          <div class="home-heat-header">
+            <span id="home-j-status-label">🌶️ Estado de J: <strong>Modo Solapado (Calentura al 99%)</strong></span>
+            <button id="btn-home-spank" class="btn-home-spank" type="button">🖐️ ¡Mandar Mano!</button>
+          </div>
+          <div class="home-heat-bar">
+            <div id="home-heat-fill" class="home-heat-fill" style="width: 88%"></div>
+          </div>
+        </div>
+
+        <!-- Botón Principal y Accesos de Colección -->
+        <div class="menu-actions">
+          <button id="btn-start-game" class="btn-primary">
+            <span>🔥 ENTRAR AL PARCHE (HISTORIA COMPLETA)</span>
+            <small>Empezar desde El Cable → Guaritos en Violeta → 2150</small>
+          </button>
+          <div class="menu-secondary-row">
+            <button id="btn-open-bag-menu" class="btn-secondary">
+              <svg class="ui-icon icon-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="6" width="20" height="12" rx="4" />
+                <line x1="6" y1="12" x2="10" y2="12" />
+                <line x1="8" y1="10" x2="8" y2="14" />
+                <circle cx="15" cy="11" r="1" fill="currentColor" />
+                <circle cx="18" cy="13" r="1" fill="currentColor" />
+              </svg>
+              <span>Minijuegos y Tienda</span>
+            </button>
+            <button id="btn-open-phone-menu" class="btn-secondary">
+              <svg class="ui-icon icon-emerald" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+              <span>WhatsApp del Parche</span>
+            </button>
+            <button id="btn-open-endings" class="btn-secondary">
+              <svg class="ui-icon icon-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                <path d="M4 22h16" />
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+              </svg>
+              <span>Finales (<span id="endings-count">0/8</span>)</span>
+            </button>
+            <button id="btn-open-secrets" class="btn-secondary btn-secret-menu">
+              <svg class="ui-icon icon-purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+              <span>Easter Eggs (<span id="secrets-count-menu">0/7</span>)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Diorama en vivo de J y Cataleya + Acceso directo a los 3 escenarios -->
+      <div class="home-hero-right">
+        <div class="home-stage-card" id="home-stage-card" title="Haz clic para cambiar la escena en vivo de J y Cataleya">
+          <div class="home-stage-top">
+            <span class="home-live-pill"><span class="live-dot"></span> CÁMARA VIP EN VIVO: 2150 / VIOLETA</span>
+            <span class="home-taxi-pill">🚕 Alerta de Taxi Canon</span>
+          </div>
+
+          <div class="home-diorama" id="home-diorama">
+            <div class="home-diorama-char home-char-ghost" id="home-char-side"></div>
+            <div class="home-diorama-char home-char-j" id="home-char-j"></div>
+            <div class="home-diorama-char home-char-cat" id="home-char-cat"></div>
+          </div>
+
+          <div class="home-live-quote" id="home-live-quote">
+            «Che, quédese tranquilo que yo me pego a Cataleya toda la noche pa’ cuidarla de Da...» 😏🔥
+          </div>
+        </div>
+
+        <!-- Selector rápido de las 3 paradas de la noche -->
+        <div class="home-routes-title">⚡ SALTAR DIRECTO A UN ESCENARIO DE LA NOCHE:</div>
+        <div class="home-routes-grid" id="home-routes-grid"></div>
+      </div>
+
+      <!-- Tira inferior de elenco con sus roles reales -->
+      <div class="home-cast-bar">
+        <div class="home-cast-label">EL PARCHE DE LA NOCHE (TOCA PARA VER EXPEDIENTE):</div>
+        <div class="hero-cast-preview" id="hero-cast-preview"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- PANTALLA DE JUEGO (NOVELA VISUAL) -->
+  <section id="game-screen" class="game-screen hidden">
+    <!-- Banner de transición de escenario -->
+    <div id="chapter-banner" class="chapter-banner hidden">
+      <div class="chapter-number" id="banner-subtitle">ESCENARIO 1</div>
+      <div class="chapter-title" id="banner-title">2150</div>
+      <div class="chapter-desc" id="banner-desc">El escenario principal donde todo comienza</div>
+    </div>
+
+    <!-- Escenario de Personajes en Pantalla -->
+    <div id="stage-characters" class="stage-characters">
+      <div id="char-left" class="char-slot slot-left"></div>
+      <div id="char-center" class="char-slot slot-center"></div>
+      <div id="char-right" class="char-slot slot-right"></div>
+    </div>
+
+    <!-- Caja de Diálogo y Decisiones -->
+    <div class="dialogue-wrapper">
+      <!-- Opciones de decisión -->
+      <div id="choices-container" class="choices-container hidden"></div>
+
+      <!-- Cuadro de diálogo -->
+      <div id="dialogue-box" class="dialogue-box">
+        <div class="speaker-row">
+          <div class="speaker-left-group">
+            <div id="speaker-badge" class="speaker-badge">NARRADOR</div>
+            <span id="spicy-indicator" class="spicy-indicator hidden">🔥 MODO MANO LARGA</span>
+            <div id="active-flags-bar" class="active-flags-bar"></div>
+          </div>
+          <div class="speaker-right-actions">
+            <button id="btn-quick-roce" class="btn-quick-roce hidden" title="Darle un rocecito extra a Cataleya">🍑 Rozárselo</button>
+            <button id="btn-back-step" class="btn-back-step hidden" title="Retroceder a la escena anterior">↩ Atrás</button>
+          </div>
+        </div>
+        <p id="dialogue-text" class="dialogue-text"></p>
+        <div class="dialogue-footer">
+          <span id="dialogue-hint" class="dialogue-hint">Toca o presiona [Espacio] para continuar ▸</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: WHATSAPP DEL PARCHE Y CHAT CON CATALEYA -->
+  <div id="modal-phone" class="modal-backdrop hidden">
+    <div class="modal-card phone-modal-card">
+      <div class="modal-header phone-header">
+        <div>
+          <h2>📱 Celular de J — WhatsApp Nocturno</h2>
+          <small style="color: #86efac; font-weight: 700;">● En línea: El Parche de El Cable y Cataleya 💋</small>
+        </div>
+        <button class="modal-close" data-close="modal-phone">✕</button>
+      </div>
+      <div class="modal-body phone-body">
+        <div class="phone-tabs">
+          <button id="tab-group-chat" class="phone-tab active">🥃 Grupo: Parche 2150</button>
+          <button id="tab-cataleya-chat" class="phone-tab">💋 Chat Privado: Cataleya</button>
+        </div>
+        <div id="phone-messages-list" class="phone-messages-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EXPEDIENTES DE PERSONAJES -->
+  <div id="modal-lore" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>📖 Personajes y Trasfondo</h2>
+        <button class="modal-close" data-close="modal-lore">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="lore-grid" class="lore-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LOS 3 ESCENARIOS -->
+  <div id="modal-map" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🗺️ Los 3 Escenarios</h2>
+        <button class="modal-close" data-close="modal-map">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">Explora cada uno de los 3 escenarios de la historia o salta directamente a cualquiera de ellos:</p>
+        <div id="scenarios-grid" class="scenarios-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FINALES DESBLOQUEADOS -->
+  <div id="modal-endings" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🏆 Galería de Finales</h2>
+        <button class="modal-close" data-close="modal-endings">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="endings-grid" class="endings-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EASTER EGGS Y SECRETOS -->
+  <div id="modal-secrets" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🥚 Easter Eggs y Secretos Ocultos</h2>
+        <button class="modal-close" data-close="modal-secrets">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">Hay 7 secretos escondidos en el juego. Usa las pistas para encontrarlos todos (al descubrir 3 se desbloquea el Final Secreto 6 en 2150):</p>
+        <div class="secret-code-box">
+          <input id="secret-code-input" type="text" placeholder="Escribe un código secreto (ej: ROCE, MANO, 2150)..." maxlength="12" />
+          <button id="btn-submit-code" class="btn-home-spank" type="button">🔑 Activar Código</button>
+        </div>
+        <div id="secrets-grid" class="endings-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BOLSILLO DE J, TIENDA NOCTURNA Y ARCADE DE MINIJUEGOS -->
+  <div id="modal-bag" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2>🎒 Bolsillo de J, Tienda de El Cable y Minijuegos</h2>
+          <small style="color: #fde047; font-weight: 800;">💵 Plata disponible: <span id="bag-money-label">$60.000</span></small>
+        </div>
+        <button class="modal-close" data-close="modal-bag">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="phone-tabs">
+          <button id="tab-bag-items" class="phone-tab active">🎒 Bolsillo y Tienda Nocturna</button>
+          <button id="tab-bag-arcade" class="phone-tab">🕹️ Arcade de Minijuegos (Gana Plata e Ítems)</button>
+        </div>
+        <div id="bag-content-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DESAFÍO / MINIJUEGO EN TIEMPO REAL -->
+  <div id="modal-minigame" class="modal-backdrop hidden">
+    <div class="modal-card minigame-modal-card">
+      <div class="modal-header">
+        <h2 id="mg-title">🕹️ DESAFÍO NOCTURNO</h2>
+        <button id="btn-close-mg" class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="mg-instructions" class="modal-intro"></p>
+        <div id="mg-stage" class="mg-stage"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js?v=5"></script>
+  <script src="game.js?v=5"></script>
+</body>
+</html>
