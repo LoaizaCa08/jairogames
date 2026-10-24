@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // JAIRO RESCUEE — MOTOR GRÁFICO HD, SPRITES VECTORIALES Y CONTROL RESPONSIVE
 // ============================================================================
 
@@ -19,7 +19,7 @@ const state = {
 const SPRITE_CACHE = {};
 
 function preloadSprites() {
-  const ids = ['j', 'jairo', 'jair', 'javier', 'gael', 'derian', 'sandra', 'thug', 'usher', 'drone', 'drone_jair'];
+  const ids = ['j', 'jairo', 'jair', 'javier', 'gael', 'derian', 'sandra', 'thug', 'usher', 'drone', 'drone_jair', 'da'];
   ids.forEach(id => {
     const svgString = getRescueCharSVG(id);
     if (!svgString) return;
@@ -131,8 +131,20 @@ function saveProgress() {
 // ---------------- CONFIGURACIÓN DE CANVAS HD Y RESPONSIVE ----------------
 const canvas = document.getElementById('rescue-canvas');
 const ctx = canvas.getContext('2d');
-const LOGICAL_W = 960;
 const LOGICAL_H = 500;
+const LANDSCAPE_W = 960;
+const PORTRAIT_W = 560;
+let LOGICAL_W = LANDSCAPE_W;
+
+// Ajusta el ancho lógico del mundo según la orientación para aprovechar toda la pantalla
+function applyLayout() {
+  const portrait = window.innerHeight > window.innerWidth * 1.05;
+  LOGICAL_W = portrait ? PORTRAIT_W : LANDSCAPE_W;
+  const container = canvas.parentElement;
+  if (container) container.style.setProperty('--ar', String(LOGICAL_W / LOGICAL_H));
+  document.body.classList.toggle('is-portrait', portrait);
+  setupHiDPICanvas();
+}
 
 function setupHiDPICanvas() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -141,7 +153,8 @@ function setupHiDPICanvas() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-window.addEventListener('resize', setupHiDPICanvas);
+window.addEventListener('resize', applyLayout);
+window.addEventListener('orientationchange', () => setTimeout(applyLayout, 150));
 
 const keys = {
   left: false,
@@ -339,6 +352,22 @@ function buildLevelWorld(levelNum) {
     world.boss = null;
   }
 
+  // Aliado DA: aparece en El Manzanareño (nivel 7) y en Virocasa (niveles 8-10)
+  world.da = null;
+  if (cfg.da) {
+    if (cfg.da === 'mid') {
+      const target = cfg.length * 0.5;
+      const spot = world.platforms
+        .filter(pl => pl.type !== 'ground' && pl.type !== 'oil_ground' && pl.w >= 150)
+        .sort((a, b) => Math.abs(a.x + a.w / 2 - target) - Math.abs(b.x + b.w / 2 - target))[0];
+      const sx = spot ? spot.x + spot.w / 2 - 23 : target;
+      const sy = spot ? spot.y - 64 : 300;
+      world.da = { x: sx, y: sy, w: 46, h: 64, joined: false, shootFlash: 0 };
+    } else {
+      world.da = { x: world.player.x - 70, y: world.player.y, w: 46, h: 64, joined: true, shootFlash: 0 };
+    }
+  }
+
   updateHudUI();
 }
 
@@ -373,6 +402,21 @@ function triggerShoot() {
     type: 'j_shot'
   });
 
+  if (world.da && world.da.joined) {
+    world.da.shootFlash = 10;
+    world.projectiles.push({
+      x: world.da.x + (p.facing > 0 ? world.da.w : -8),
+      y: world.da.y + 28,
+      vx: p.facing * 12,
+      vy: 0,
+      r: 7,
+      damage: getShotDamage() * 0.9,
+      color: '#38bdf8',
+      glow: '#bae6fd',
+      type: 'da_shot'
+    });
+  }
+
   if (p.hasGael) {
     world.projectiles.push({
       x: p.facing > 0 ? p.x + p.w - 8 : p.x - 8,
@@ -391,7 +435,7 @@ function triggerShoot() {
 function triggerSpecialPower() {
   if (!state.isPlaying || state.isPausedForDialogue) return;
   if (world.specialCooldown > 0) {
-    showToast('⏳ Recargando Poder de Gael y Aceite de Derian...');
+    showToast('⏳ Recargando... hasta el Aro LED necesita un respiro, ¡paciencia!');
     return;
   }
 
@@ -405,14 +449,14 @@ function triggerSpecialPower() {
 
   world.enemies.forEach(en => {
     if (en.x >= camLeft && en.x <= camRight) {
-      en.hp -= 4.5 + (state.upgrades.gael_ring || 0);
+      en.hp -= 4.5 + (state.upgrades.gael_ring || 0) + (world.da && world.da.joined ? 1.5 : 0);
       spawnParticles(en.x + en.w / 2, en.y + en.h / 2, '#ec4899', 15);
     }
   });
   world.enemies = world.enemies.filter(en => en.hp > 0);
 
   if (world.boss && !world.boss.defeated && Math.abs(world.boss.x - world.player.x) < 700) {
-    world.boss.hp -= 5.5 + (state.upgrades.gael_ring || 0);
+    world.boss.hp -= 5.5 + (state.upgrades.gael_ring || 0) + (world.da && world.da.joined ? 1.5 : 0);
     spawnParticles(world.boss.x + world.boss.w / 2, world.boss.y + 45, '#ec4899', 22);
     if (world.boss.hp <= 0) {
       handleBossDefeated();
@@ -422,7 +466,7 @@ function triggerSpecialPower() {
   world.floatingTexts.push({
     x: world.player.x - 20,
     y: world.player.y - 26,
-    text: '🎥 ¡FLASH WEBCAM DE GAEL + ACEITE DE DERIAN! 🧴',
+    text: '🎥 ¡SHOW PRIVADO DE GAEL + ACEITE DE DERIAN! 🔥',
     color: '#f9a8d4',
     life: 60
   });
@@ -514,7 +558,7 @@ function updateWorld() {
   }
 
   if (p.y > LOGICAL_H + 90) {
-    damagePlayer(1, '¡Cuidado con el vacío!');
+    damagePlayer(1, '¡Caíste! Sandra dice que mires por dónde andas, no por dónde miras.');
     p.x = Math.max(80, p.x - 160);
     p.y = 200;
     p.vy = 0;
@@ -535,10 +579,35 @@ function updateWorld() {
       world.floatingTexts.push({
         x: b.x - 20,
         y: b.y - 12,
-        text: '+1 🦴 Hueso de Jairo',
+        text: '+1 🦴 ¡Hueso bien duro!',
         color: '#fde047',
         life: 42
       });
+    }
+  }
+
+  // Aliado DA: se une al tocarlo y luego sigue a J
+  if (world.da) {
+    const d = world.da;
+    if (d.shootFlash > 0) d.shootFlash--;
+    if (!d.joined) {
+      if (Math.abs(p.x - d.x) < 70 && Math.abs(p.y - d.y) < 90) {
+        d.joined = true;
+        playSfx('special');
+        spawnParticles(d.x + d.w / 2, d.y + 20, '#38bdf8', 18);
+        showToast('🤝 ¡DA se une al rescate! Dispara junto a J y vive en Virocasa.');
+        world.floatingTexts.push({
+          x: d.x - 30,
+          y: d.y - 14,
+          text: '🤝 DA: "Yo te cubro la espalda, J"',
+          color: '#7dd3fc',
+          life: 70
+        });
+      }
+    } else {
+      d.x += (p.x - p.facing * 84 - d.x) * 0.1;
+      d.y += (p.y - d.y) * 0.22;
+      d.facing = p.facing;
     }
   }
 
@@ -553,7 +622,7 @@ function updateWorld() {
       world.floatingTexts.push({
         x: oil.x - 30,
         y: oil.y - 16,
-        text: '🧴 ¡ACEITE DE DERIAN! (+Vida y Turbo)',
+        text: '🧴 ¡ACEITE DE DERIAN! Todo resbala rico (+Vida y Turbo)',
         color: '#fef08a',
         life: 55
       });
@@ -742,7 +811,7 @@ function updateWorld() {
       world.floatingTexts.push({
         x: world.goalX - 50,
         y: 300,
-        text: '🔒 ¡Derrota al Jefe primero!',
+        text: '🔒 ¡Primero termina con la jefa, no te apures!',
         color: '#fca5a5',
         life: 20
       });
@@ -834,6 +903,10 @@ function drawParallaxBackground(cfg) {
     skyGrad.addColorStop(0, '#0d0626');
     skyGrad.addColorStop(0.55, '#1e1145');
     skyGrad.addColorStop(1, '#08142c');
+  } else if (cfg.theme === 'manzanareno') {
+    skyGrad.addColorStop(0, '#2b1205');
+    skyGrad.addColorStop(0.5, '#5a2a0b');
+    skyGrad.addColorStop(1, '#140a04');
   } else if (cfg.theme === 'derian_spa') {
     skyGrad.addColorStop(0, '#271504');
     skyGrad.addColorStop(0.55, '#422306');
@@ -854,11 +927,11 @@ function drawParallaxBackground(cfg) {
   ctx.save();
   ctx.fillStyle = 'rgba(254, 240, 138, 0.14)';
   ctx.beginPath();
-  ctx.arc(820, 82, 58, 0, Math.PI * 2);
+  ctx.arc(LOGICAL_W - 140, 82, 58, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#fef08a';
   ctx.beginPath();
-  ctx.arc(820, 82, 34, 0, Math.PI * 2);
+  ctx.arc(LOGICAL_W - 140, 82, 34, 0, Math.PI * 2);
   ctx.fill();
 
   for (let i = 0; i < 24; i++) {
@@ -916,7 +989,7 @@ function drawParallaxBackground(cfg) {
         ? '#3b82f6'
         : cfg.theme.includes('gael')
         ? '#ec4899'
-        : cfg.theme === 'derian_spa'
+        : cfg.theme === 'derian_spa' || cfg.theme === 'manzanareno'
         ? '#eab308'
         : '#f59e0b';
     ctx.lineWidth = 2;
@@ -940,22 +1013,25 @@ function drawParallaxBackground(cfg) {
     ctx.fillStyle = '#fde047';
     ctx.font = 'bold 12px Segoe UI, sans-serif';
     let titleSign = '🏠 VIROCENTRO';
-    let subSign = 'CASA DE DOÑA SANDRA';
+    let subSign = 'CASA DE SANDRA (CHISMOSA)';
     if (cfg.theme === 'cinema') {
       titleSign = '🍿 CINE VIP: SALA 4';
-      subSign = 'J & JAVIER (¿NOVIOS?)';
+      subSign = 'ÚLTIMA FILA: J & JAVIER 💋';
     } else if (cfg.theme === 'sanjorge') {
       titleSign = '⛰️ BARRIO SAN JORGE';
-      subSign = 'RUTA DE RESCATE';
+      subSign = 'CUESTAS QUE DAN CALOR';
     } else if (cfg.theme === 'sanjorge_gael') {
       titleSign = '🎥 GAEL STREAM VIP';
-      subSign = 'SAN JORGE • +10K TOKENS';
+      subSign = 'SHOW PRIVADO • +10K TOKENS';
+    } else if (cfg.theme === 'manzanareno') {
+      titleSign = '🍽️ EL MANZANAREÑO';
+      subSign = 'BANDEJA PAISA BIEN PICANTE';
     } else if (cfg.theme === 'derian_spa') {
       titleSign = '🧴 SPA DE DERIAN';
-      subSign = 'MASAJES EN ACEITE PURO';
+      subSign = 'MASAJES "FELICES" EN ACEITE';
     } else if (cfg.theme.includes('virocasa')) {
       titleSign = '🚨 FORTALEZA VIROCASA';
-      subSign = 'GUARIDA FINAL DE JAIR';
+      subSign = 'ALCOBA DE LA REINA JAIR';
     }
     ctx.fillText(titleSign, bx + 246, 238);
     ctx.fillStyle = '#f472b6';
@@ -1012,6 +1088,10 @@ function drawPlatform3D(plat) {
   }
 
   ctx.restore();
+}
+
+function p0Facing(d) {
+  return world.player && world.player.x < d.x ? -1 : 1;
 }
 
 function renderWorld() {
@@ -1074,7 +1154,7 @@ function renderWorld() {
     }
     ctx.fillStyle = '#fef08a';
     ctx.font = 'bold 10px sans-serif';
-    ctx.fillText('🧴 ACEITE', -22, 30);
+    ctx.fillText('🧴 ACEITE (resbala rico)', -22, 30);
     ctx.restore();
   }
 
@@ -1101,7 +1181,7 @@ function renderWorld() {
     }
     ctx.fillStyle = '#fde047';
     ctx.font = 'bold 13px sans-serif';
-    ctx.fillText('🐶 ¡RESCATA A JAIRO!', cageX - 24, cageY - 10);
+    ctx.fillText('🐶 ¡SÁCALO DE LA JAULA!', cageX - 24, cageY - 10);
     ctx.restore();
   } else {
     ctx.save();
@@ -1151,7 +1231,26 @@ function renderWorld() {
     ctx.fillText(b.name, b.x - 18, b.y - 12);
   }
 
-  // 7. Jugador J con Sprite HD y animaciones
+  // 6.5 Aliado DA (mismo look que J, otra ropa): esperando en El Manzanareño o siguiendo a J
+  if (world.da) {
+    const d = world.da;
+    const dFacing = d.joined ? (d.facing || 1) : (p0Facing(d));
+    const moving = d.joined && Math.abs(world.player.vx) > 0.4;
+    drawSpriteCharacter('da', d.x, d.y, d.w, d.h, dFacing, moving, 0.25);
+    ctx.save();
+    ctx.fillStyle = '#7dd3fc';
+    ctx.font = 'bold 12px Segoe UI, sans-serif';
+    ctx.fillText(d.joined ? '🤝 DA' : '🤝 DA (¡acércate!)', d.x - (d.joined ? 2 : 32), d.y - 10 + (d.joined ? 0 : Math.sin(world.tick * 0.12) * 4));
+    if (d.shootFlash > 0) {
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.5)';
+      ctx.beginPath();
+      ctx.arc(d.x + d.w / 2 + dFacing * 30, d.y + 30, 10, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // 7. Jugador J
   const p = world.player;
   if (p.invuln % 6 < 4) {
     if (p.oilBoostTimer > 0) {
@@ -1241,7 +1340,7 @@ function startLevel(levelNum) {
   document.getElementById('menu-screen').classList.add('hidden');
   document.getElementById('play-screen').classList.remove('hidden');
   closeModal('modal-result');
-  setupHiDPICanvas();
+  applyLayout();
 
   state.isPlaying = true;
   const cfg = world.levelCfg;
@@ -1311,22 +1410,22 @@ function openResultModal(isVictory) {
   if (isVictory) {
     if (lvl === 10) {
       art.innerHTML = getRescueCharSVG('jairo');
-      title.textContent = '🏆 ¡RESCATASTE A JAIRO EN VIROCASA!';
+      title.textContent = '🏆 ¡JAIRO ESTÁ LIBRE (Y BIEN ACEITADO)!';
       desc.textContent =
-        '¡Completaste los 10 niveles de JAIRO RESCUEE! Derrotaste a Jair y a Javier, contaste con el Aro LED de Gael en San Jorge y el aceite de Derian, y Jairo el Pomerania volvió sano y salvo a Virocentro.';
+        '¡Completaste los 10 niveles! Derrotaste a Jair y a Javier, Gael hizo su show, Derian dejó todo resbaloso y Jairo volvió a Virocentro con la colita en alto. Sandra todavía no se cree la versión oficial.';
       nextBtn.classList.add('hidden');
       playSfx('bark');
     } else {
       art.innerHTML = getRescueCharSVG(lvl >= 5 ? 'gael' : 'j');
       title.textContent = `✅ ¡NIVEL ${lvl} SUPERADO!`;
-      desc.textContent = `Excelente trabajo en ${world.levelCfg.location}. El Nivel ${lvl + 1} ya está desbloqueado.`;
+      desc.textContent = `Qué bien lo hiciste en ${world.levelCfg.location}. El Nivel ${lvl + 1} te espera, y viene más caliente.`;
       nextBtn.classList.remove('hidden');
     }
   } else {
     art.innerHTML = getRescueCharSVG('sandra');
-    title.textContent = '💥 ¡SANDRA TE REGAÑÓ!';
+    title.textContent = '💥 ¡SANDRA TE PILLÓ EN ALGO RARO!';
     desc.textContent =
-      'Perdiste todos tus corazones. Puedes comprar mejoras con los huesos dorados de Jairo o reintentar el nivel.';
+      'Te quedaste sin corazones y sin dignidad. Compra mejoras con tus huesos o vuelve a intentarlo, campeón.';
     nextBtn.classList.add('hidden');
   }
 
@@ -1362,7 +1461,7 @@ function renderMenuLevels() {
     card.className = `level-card ${unlocked ? '' : 'locked'} ${lvl.boss ? 'boss-level' : ''}`;
 
     const statusIcon = completed ? '✅' : unlocked ? '🔓' : '🔒';
-    const bossTag = lvl.boss ? ' • 😈 JEFE' : lvl.ally ? ' • 🎥 GAEL' : '';
+    const bossTag = lvl.boss ? ' • 😈 JEFE' : lvl.da ? ' • 🤝 DA' : lvl.ally ? ' • 🎥 GAEL' : '';
 
     card.innerHTML = `
       <div class="lvl-top">
@@ -1454,7 +1553,7 @@ function renderShopModal() {
 
     item.querySelector('button').addEventListener('click', () => {
       if (state.bones < cost) {
-        showToast('🦴 Te faltan Huesos Dorados de Jairo para esta mejora.');
+        showToast('🦴 Te faltan huesos, y no de los que piensas. Sigue recolectando.');
         return;
       }
       state.bones -= cost;
@@ -1534,7 +1633,7 @@ function setupResponsiveControls() {
 // ---------------- INICIALIZACIÓN ----------------
 document.addEventListener('DOMContentLoaded', () => {
   preloadSprites();
-  setupHiDPICanvas();
+  applyLayout();
   renderMenuLevels();
   renderCastStripAndModal();
   buildLevelWorld(state.maxUnlockedLevel);
@@ -1557,7 +1656,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveProgress();
     renderMenuLevels();
     playSfx('win');
-    showToast('🔓 ¡Los 10 niveles (Virocentro, Cine, San Jorge y Virocasa) están desbloqueados!');
+    showToast('🔓 ¡Destapaste los 10 niveles! Ya puedes verlo todo, pillín.');
   });
 
   document.getElementById('btn-open-chars').addEventListener('click', () => openModal('modal-chars'));

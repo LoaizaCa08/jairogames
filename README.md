@@ -1,4 +1,4 @@
-# JAIROGAMES
+﻿# JAIROGAMES
 
 Portal web de juegos en HTML, CSS y JavaScript, sin dependencias de compilación ni base de datos. El progreso se guarda en el navegador mediante `localStorage`.
 
@@ -21,6 +21,7 @@ node --check portal.js
 node --check call-of-j/data.js
 node --check call-of-j/game.js
 node --check jairo-rescuee/data.js
+node --check jairo-rescuee/sprites.js
 node --check jairo-rescuee/game.js
 ```
 

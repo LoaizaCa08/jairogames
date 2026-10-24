@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>JAIRO RESCUEE — Arcade de 10 Niveles | JAIROGAMES</title>
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <!-- Notificaciones Toast -->
@@ -53,13 +53,13 @@
       <!-- Columna Izquierda: Historia, Héroe y Controles Principales -->
       <div class="menu-left">
         <div class="menu-badges">
-          <span class="tag-arcade">🕹️ ARCADE DE PLATAFORMAS • 10 NIVELES</span>
+          <span class="tag-arcade">🔥 ARCADE +18 PICANTE • 10 NIVELES</span>
           <span class="tag-loc">📍 VIROCENTRO • CINE • SAN JORGE • VIROCASA</span>
         </div>
 
         <h1 class="game-main-title">JAIRO <span>RESCUEE</span></h1>
         <p class="game-main-desc">
-          ¡<strong>Jair</strong> y <strong>Javier</strong> (el amigo del cine de quien <strong>Sandra</strong> dice que parece novio de J) secuestraron a <strong>Jairo el Pomerania</strong>! Recorre <strong>Virocentro</strong>, únete en <strong>San Jorge</strong> al webcamer <strong>Gael</strong>, resbala en el aceite sospechoso de <strong>Derian</strong> y rescata a Jairo en la batalla final de <strong>Virocasa</strong>.
+          🌶️ <strong>Jair</strong> (reina del mal en corset) y <strong>Javier</strong> (la "amiga" de cine de J, última fila, mantequilla caliente) secuestraron a <strong>Jairo el Pomerania</strong>. Recorre <strong>Virocentro</strong>, sube sudando a <strong>San Jorge</strong> con el webcamer <strong>Gael</strong>, resbala en el aceite de <strong>Derian</strong> y rescata a Jairo en <strong>Virocasa</strong>. <strong>Sandra</strong> sospecha de todos.
         </p>
 
         <!-- Tarjeta de Aliados y Villanos -->
@@ -67,22 +67,29 @@
           <div class="highlight-item">
             <span class="hi-icon">🍿</span>
             <div>
-              <strong>Javier (Secuestrador del Cine):</strong>
-              <small>Sandra jura que él y J son novios por ir juntos a cine.</small>
+              <strong>Javier (la Novia del Cine):</strong>
+              <small>Sandra jura que ella y J son novios: nadie ve una película entera desde la última fila.</small>
             </div>
           </div>
           <div class="highlight-item">
             <span class="hi-icon">🎥</span>
             <div>
-              <strong>Gael (Aliado Webcamer en San Jorge):</strong>
-              <small>Se une a J en el Nivel 5 con su Aro de Luz LED y Lluvia de Tokens.</small>
+              <strong>Gael (Webcamer en San Jorge):</strong>
+              <small>Se une en el Nivel 5 con su Aro LED y cobra tokens hasta en plena pelea.</small>
+            </div>
+          </div>
+          <div class="highlight-item">
+            <span class="hi-icon">🤝</span>
+            <div>
+              <strong>Da (Aliado en El Manzanareño y Virocasa):</strong>
+              <small>El gemelo de J con otra ropa: te cubre la espalda y conoce todos los ruidos de la casa.</small>
             </div>
           </div>
           <div class="highlight-item">
             <span class="hi-icon">🧴</span>
             <div>
-              <strong>Derian (Masajes a Jairo en Aceite):</strong>
-              <small>Le da masajes en aceite a Jairo y Sandra piensa que hacen otra cosa.</small>
+              <strong>Derian (Masajes en Aceite a Jairo):</strong>
+              <small>Sandra piensa que ahí pasa otra cosa. El perro no desmiente nada.</small>
             </div>
           </div>
         </div>
@@ -93,9 +100,9 @@
             <small id="btn-play-sub">Empezar desde el Nivel 1 en Virocentro ▸</small>
           </button>
           <div class="menu-sub-btns">
-            <button id="btn-menu-chars" class="btn-sec">📖 Nuevos Personajes (7)</button>
+            <button id="btn-menu-chars" class="btn-sec">📖 Personajes (8)</button>
             <button id="btn-menu-shop" class="btn-sec">🧴 Tienda de Aceite y Luces</button>
-            <button id="btn-unlock-all" class="btn-sec" title="Desbloquear los 10 niveles para probar cualquiera">🔓 Desbloquear 10 Niveles</button>
+            <button id="btn-unlock-all" class="btn-sec" title="Desbloquear los 10 niveles para probar cualquiera">🔓 Destapar 10 Niveles</button>
           </div>
         </div>
       </div>
@@ -170,7 +177,7 @@
         <div class="touch-actions">
           <button id="ctrl-jump" class="ctrl-btn ctrl-jump" type="button">▲ SALTAR</button>
           <button id="ctrl-shoot" class="ctrl-btn ctrl-shoot" type="button">🔥 ATACAR</button>
-          <button id="ctrl-special" class="ctrl-btn ctrl-special" type="button">🎥 PODER (<span id="special-cd-label">LISTO</span>)</button>
+          <button id="ctrl-special" class="ctrl-btn ctrl-special" type="button">🎥 PODER <span id="special-cd-label">LISTO</span></button>
         </div>
       </div>
     </div>
@@ -220,7 +227,8 @@
     </div>
   </div>
 
-  <script src="data.js?v=2"></script>
-  <script src="game.js?v=2"></script>
+  <script src="data.js?v=3"></script>
+  <script src="sprites.js?v=3"></script>
+  <script src="game.js?v=3"></script>
 </body>
 </html>

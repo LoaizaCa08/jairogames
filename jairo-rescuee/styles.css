@@ -889,3 +889,111 @@ html, body {
     width: 60%;
   }
 }
+
+/* ============================================================================
+   AJUSTES RESPONSIVE v3 (móvil vertical, horizontal, tablet y escritorio)
+   ============================================================================ */
+:root { --ar: 1.92; }
+
+.canvas-container {
+  aspect-ratio: var(--ar);
+  width: min(100%, calc((100dvh - 168px) * var(--ar)));
+  max-height: none;
+  touch-action: none;
+}
+
+.arcade-stage-wrap { align-items: center; }
+.arcade-stage-wrap > * { width: 100%; }
+.arcade-stage-wrap > .canvas-container { width: min(100%, calc((100dvh - 168px) * var(--ar))); }
+
+/* Menú: tira de elenco sin desbordes y niveles sin scroll feo */
+.cast-strip {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.cast-pill { min-width: 0; }
+.cast-info { min-width: 0; }
+.menu-shell { min-width: 0; }
+.menu-left, .menu-right { min-width: 0; }
+
+.levels-grid {
+  max-height: none;
+  overflow: visible;
+}
+
+.levels-grid, .modal-body, .menu-screen {
+  scrollbar-width: thin;
+  scrollbar-color: #f59e0b #0d1323;
+}
+.levels-grid::-webkit-scrollbar, .modal-body::-webkit-scrollbar { width: 8px; }
+.levels-grid::-webkit-scrollbar-track, .modal-body::-webkit-scrollbar-track { background: #0d1323; border-radius: 8px; }
+.levels-grid::-webkit-scrollbar-thumb, .modal-body::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 8px; }
+
+.ctrl-btn { white-space: nowrap; line-height: 1.1; }
+
+/* Móvil vertical: mundo más alto y controles en dos filas cómodas */
+@media (max-width: 960px) {
+  .canvas-container,
+  .arcade-stage-wrap > .canvas-container { width: 100%; }
+  .menu-screen { align-items: flex-start; }
+  .levels-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .play-screen { padding: 4px 6px; }
+  .rescue-topbar { gap: 6px; }
+  .topbar-left, .topbar-right { gap: 4px; }
+  .hud-stat-pill { padding: 4px 8px; font-size: 0.74rem; }
+
+  .controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px;
+  }
+  .touch-dpad, .touch-actions { width: 100%; gap: 8px; }
+  .touch-dpad .ctrl-btn { flex: 1; padding: 16px 10px; font-size: 0.95rem; }
+  .touch-actions .ctrl-btn { flex: 1; padding: 14px 6px; font-size: 0.8rem; }
+  .ctrl-special { flex: 1.35; }
+  .levels-grid { grid-template-columns: 1fr; }
+  .cast-strip { grid-template-columns: repeat(2, 1fr); }
+  .game-main-title { font-size: 2.2rem; }
+  .dialogue-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .dlg-portrait { width: 56px; height: 56px; }
+  .dialogue-overlay { align-items: flex-end; padding: 6px; }
+  .dlg-text { font-size: 0.8rem; line-height: 1.32; }
+  .result-card { padding: 16px; }
+  .modal-card { max-height: 94dvh; border-radius: 16px; }
+}
+
+/* Teléfono horizontal: pantalla completa con controles flotando sobre el juego */
+@media (orientation: landscape) and (max-height: 540px) {
+  html, body { overflow: hidden; }
+  .rescue-topbar { padding: 4px 8px; }
+  .hud-btn .btn-label { display: none; }
+  .location-pill { max-width: 200px; font-size: 0.68rem; padding: 3px 9px; }
+  .play-screen { padding: 2px 4px; position: relative; }
+  .canvas-container,
+  .arcade-stage-wrap > .canvas-container {
+    width: min(100%, calc((100dvh - 56px) * var(--ar)));
+    border-radius: 12px;
+  }
+  .controls-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 6px;
+    background: transparent;
+    border: none;
+    padding: 0 14px;
+    pointer-events: none;
+    z-index: 30;
+  }
+  .controls-bar > * { pointer-events: auto; }
+  .keyboard-hints { display: none; }
+  .ctrl-btn {
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    padding: 14px 18px;
+    font-size: 0.8rem;
+  }
+  .boss-hud { position: absolute; top: 48px; left: 50%; transform: translateX(-50%); width: min(60%, 520px); z-index: 25; padding: 3px 10px; }
+  .menu-screen { align-items: flex-start; }
+}
