@@ -1,5 +1,5 @@
 // ============================================================================
-// JAIRO RESCUEE — MOTOR ARCADE DE 10 NIVELES (PLATAFORMAS, ALIADOS Y JEFES)
+// JAIRO RESCUEE — MOTOR GRÁFICO HD, SPRITES VECTORIALES Y CONTROL RESPONSIVE
 // ============================================================================
 
 const state = {
@@ -14,6 +14,20 @@ const state = {
   dialogueQueue: [],
   onDialogueDone: null
 };
+
+// ---------------- CACHÉ DE SPRITES SVG DE ALTA DEFINICIÓN ----------------
+const SPRITE_CACHE = {};
+
+function preloadSprites() {
+  const ids = ['j', 'jairo', 'jair', 'javier', 'gael', 'derian', 'sandra', 'thug', 'usher', 'drone', 'drone_jair'];
+  ids.forEach(id => {
+    const svgString = getRescueCharSVG(id);
+    if (!svgString) return;
+    const img = new Image();
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString.trim());
+    SPRITE_CACHE[id] = img;
+  });
+}
 
 // ---------------- SISTEMA DE SONIDO SINTETIZADO (WEB AUDIO API) ----------------
 let audioCtx = null;
@@ -34,15 +48,15 @@ function playSfx(type) {
 
     if (type === 'jump') {
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(280, now);
-      osc.frequency.exponentialRampToValueAtTime(580, now + 0.13);
+      osc.frequency.setValueAtTime(290, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.13);
       gain.gain.setValueAtTime(0.07, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
       osc.start(now);
       osc.stop(now + 0.14);
     } else if (type === 'shoot') {
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(680, now);
+      osc.frequency.setValueAtTime(700, now);
       osc.frequency.exponentialRampToValueAtTime(220, now + 0.09);
       gain.gain.setValueAtTime(0.07, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
@@ -114,9 +128,20 @@ function saveProgress() {
   localStorage.setItem('jairorescue_upgrades', JSON.stringify(state.upgrades));
 }
 
-// ---------------- ESTADO DEL MUNDO ARCADE EN EL CANVAS ----------------
+// ---------------- CONFIGURACIÓN DE CANVAS HD Y RESPONSIVE ----------------
 const canvas = document.getElementById('rescue-canvas');
 const ctx = canvas.getContext('2d');
+const LOGICAL_W = 960;
+const LOGICAL_H = 500;
+
+function setupHiDPICanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = LOGICAL_W * dpr;
+  canvas.height = LOGICAL_H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener('resize', setupHiDPICanvas);
 
 const keys = {
   left: false,
@@ -126,6 +151,7 @@ const keys = {
 let world = {
   levelCfg: null,
   cameraX: 0,
+  tick: 0,
   player: null,
   platforms: [],
   bonesList: [],
@@ -158,6 +184,7 @@ function buildLevelWorld(levelNum) {
   const cfg = RESCUE_LEVELS.find(l => l.level === levelNum) || RESCUE_LEVELS[0];
   world.levelCfg = cfg;
   world.cameraX = 0;
+  world.tick = 0;
   world.projectiles = [];
   world.enemyProjectiles = [];
   world.particles = [];
@@ -168,9 +195,9 @@ function buildLevelWorld(levelNum) {
   const maxHp = getMaxHearts();
   world.player = {
     x: 90,
-    y: 340,
-    w: 38,
-    h: 54,
+    y: 330,
+    w: 46,
+    h: 64,
     vx: 0,
     vy: 0,
     facing: 1,
@@ -180,6 +207,7 @@ function buildLevelWorld(levelNum) {
     maxHp: maxHp,
     invuln: 0,
     oilBoostTimer: 0,
+    shootAnim: 0,
     hasGael: cfg.ally === 'gael' || levelNum >= 5
   };
 
@@ -189,59 +217,55 @@ function buildLevelWorld(levelNum) {
   world.enemies = [];
 
   // Suelo inicial seguro
-  world.platforms.push({ x: 0, y: 430, w: 420, h: 70, type: 'ground' });
+  world.platforms.push({ x: 0, y: 425, w: 430, h: 75, type: 'ground' });
 
-  let cursorX = 460;
-  const endSectionX = cfg.length - 480;
+  let cursorX = 465;
+  const endSectionX = cfg.length - 500;
   let stepIndex = 0;
 
   while (cursorX < endSectionX) {
-    const gap = 65 + ((stepIndex * 29) % 55);
+    const gap = 65 + ((stepIndex * 27) % 52);
     cursorX += gap;
 
-    const platW = 150 + ((stepIndex * 47) % 120);
-    const platY = 250 + ((stepIndex * 67) % 165);
+    const platW = 165 + ((stepIndex * 43) % 120);
+    const platY = 250 + ((stepIndex * 61) % 150);
     const isSlippery = cfg.slippery || (levelNum >= 6 && stepIndex % 3 === 0);
 
     world.platforms.push({
       x: cursorX,
       y: platY,
       w: platW,
-      h: 22,
+      h: 26,
       type: isSlippery ? 'oil_plat' : 'plat'
     });
 
-    // Añadir suelo bajo algunas secciones para que sea muy jugable
     if (stepIndex % 2 === 0) {
       world.platforms.push({
         x: cursorX - 30,
-        y: 430,
+        y: 425,
         w: platW + 60,
-        h: 70,
+        h: 75,
         type: cfg.slippery ? 'oil_ground' : 'ground'
       });
     }
 
-    // Hueso dorado coleccionable
     if (stepIndex % 2 === 0) {
       world.bonesList.push({
         x: cursorX + platW * 0.5,
-        y: platY - 34,
-        r: 13,
+        y: platY - 36,
+        r: 14,
         collected: false
       });
     }
 
-    // Frasco de Aceite de Derian (Da turbo y cura 1 corazón)
-    if (stepIndex === 3 || stepIndex === 7) {
+    if (stepIndex === 2 || stepIndex === 6) {
       world.oilBottles.push({
         x: cursorX + platW * 0.35,
-        y: platY - 36,
+        y: platY - 38,
         collected: false
       });
     }
 
-    // Enemigos patrullando
     const enemyType =
       cfg.theme === 'cinema'
         ? 'usher'
@@ -249,21 +273,21 @@ function buildLevelWorld(levelNum) {
         ? 'drone'
         : 'thug';
 
-    const enemyY = enemyType === 'drone' ? platY - 75 : platY - 46;
+    const enemyY = enemyType === 'drone' ? platY - 82 : platY - 56;
     const enemyHp = 2 + Math.floor(levelNum / 3);
 
     world.enemies.push({
       x: cursorX + platW * 0.5,
       y: enemyY,
-      minX: cursorX + 10,
-      maxX: cursorX + platW - 36,
-      w: 36,
-      h: 46,
-      vx: (1.4 + levelNum * 0.14) * (stepIndex % 2 === 0 ? 1 : -1),
+      minX: cursorX + 12,
+      maxX: cursorX + platW - 48,
+      w: 46,
+      h: 56,
+      vx: (1.45 + levelNum * 0.13) * (stepIndex % 2 === 0 ? 1 : -1),
       hp: enemyHp,
       maxHp: enemyHp,
       type: enemyType,
-      shootTimer: 80 + (stepIndex * 25) % 90
+      shootTimer: 85 + (stepIndex * 29) % 90
     });
 
     cursorX += platW;
@@ -272,39 +296,42 @@ function buildLevelWorld(levelNum) {
 
   // Arena final del nivel
   const arenaX = endSectionX + 40;
-  const arenaW = 540;
+  const arenaW = 560;
   world.platforms.push({
     x: arenaX,
-    y: 430,
+    y: 425,
     w: arenaW,
-    h: 70,
+    h: 75,
     type: cfg.slippery ? 'oil_ground' : 'ground'
   });
 
-  // Dos plataformas de apoyo en la arena final
-  world.platforms.push({ x: arenaX + 70, y: 315, w: 120, h: 18, type: 'plat' });
-  world.platforms.push({ x: arenaX + 310, y: 315, w: 120, h: 18, type: 'plat' });
+  world.platforms.push({ x: arenaX + 65, y: 305, w: 130, h: 22, type: 'plat' });
+  world.platforms.push({ x: arenaX + 315, y: 305, w: 130, h: 22, type: 'plat' });
 
   world.goalX = arenaX + arenaW - 95;
 
-  // Configurar Jefe si el nivel tiene Jefe (Niveles 3, 6, 9, 10)
   if (cfg.boss) {
     world.boss = {
       id: cfg.boss.id,
+      spriteId: cfg.boss.id.includes('javier')
+        ? 'javier'
+        : cfg.boss.id.includes('drone')
+        ? 'drone_jair'
+        : 'jair',
       name: cfg.boss.name,
       hp: cfg.boss.hp,
       maxHp: cfg.boss.hp,
       color: cfg.boss.color,
       quote: cfg.boss.quote,
       x: arenaX + 340,
-      y: 330,
-      w: 64,
-      h: 96,
+      y: 315,
+      w: 84,
+      h: 110,
       vx: -2.2,
-      minX: arenaX + 60,
-      maxX: arenaX + arenaW - 110,
-      attackTimer: 75,
-      jumpTimer: 120,
+      minX: arenaX + 55,
+      maxX: arenaX + arenaW - 135,
+      attackTimer: 72,
+      jumpTimer: 115,
       vy: 0,
       defeated: false
     };
@@ -320,42 +347,43 @@ function triggerJump() {
   if (!state.isPlaying || state.isPausedForDialogue) return;
   const p = world.player;
   if (p.jumpsLeft > 0) {
-    p.vy = -12.6 * (1 + (state.upgrades.derian_oil || 0) * 0.04);
+    p.vy = -12.8 * (1 + (state.upgrades.derian_oil || 0) * 0.04);
     p.onGround = false;
     p.jumpsLeft--;
     playSfx('jump');
-    spawnParticles(p.x + p.w / 2, p.y + p.h, '#fde047', 6);
+    spawnParticles(p.x + p.w / 2, p.y + p.h, '#fde047', 8);
   }
 }
 
 function triggerShoot() {
   if (!state.isPlaying || state.isPausedForDialogue) return;
   const p = world.player;
+  p.shootAnim = 12;
   playSfx('shoot');
 
-  // Disparo principal de J
   world.projectiles.push({
-    x: p.facing > 0 ? p.x + p.w : p.x - 14,
-    y: p.y + 22,
-    vx: p.facing * 11,
+    x: p.facing > 0 ? p.x + p.w : p.x - 10,
+    y: p.y + 26,
+    vx: p.facing * 11.5,
     vy: 0,
-    r: 7,
+    r: 8,
     damage: getShotDamage(),
-    color: p.oilBoostTimer > 0 ? '#eab308' : '#f59e0b',
-    label: '🔥'
+    color: p.oilBoostTimer > 0 ? '#facc15' : '#f59e0b',
+    glow: '#fde047',
+    type: 'j_shot'
   });
 
-  // Si Gael está aliado (Nivel 5+ o desbloqueado), Gael dispara un rayo de Aro LED / Token
   if (p.hasGael) {
     world.projectiles.push({
-      x: p.facing > 0 ? p.x + p.w - 6 : p.x - 10,
-      y: p.y + 6,
-      vx: p.facing * 12.5,
-      vy: -0.6,
-      r: 6,
-      damage: getShotDamage() * 0.75,
+      x: p.facing > 0 ? p.x + p.w - 8 : p.x - 8,
+      y: p.y + 8,
+      vx: p.facing * 13,
+      vy: -0.4,
+      r: 7,
+      damage: getShotDamage() * 0.78,
       color: '#ec4899',
-      label: '💎'
+      glow: '#f9a8d4',
+      type: 'gael_token'
     });
   }
 }
@@ -363,41 +391,40 @@ function triggerShoot() {
 function triggerSpecialPower() {
   if (!state.isPlaying || state.isPausedForDialogue) return;
   if (world.specialCooldown > 0) {
-    showToast('⏳ Cargando Poder Especial de Gael y Derian...');
+    showToast('⏳ Recargando Poder de Gael y Aceite de Derian...');
     return;
   }
 
   playSfx('special');
-  world.specialCooldown = 360; // 6 segundos a 60fps
-  world.flashTimer = 26;
-  world.player.oilBoostTimer = 240; // 4 segundos de Aceite Turbo de Derian
+  world.specialCooldown = 340;
+  world.flashTimer = 28;
+  world.player.oilBoostTimer = 250;
 
-  // Onda destructora de Aro de Luz de Gael + Aceite de Derian a todos los enemigos en pantalla
-  const camLeft = world.cameraX - 60;
-  const camRight = world.cameraX + canvas.width + 60;
+  const camLeft = world.cameraX - 80;
+  const camRight = world.cameraX + LOGICAL_W + 80;
 
   world.enemies.forEach(en => {
     if (en.x >= camLeft && en.x <= camRight) {
-      en.hp -= 4 + (state.upgrades.gael_ring || 0);
-      spawnParticles(en.x + en.w / 2, en.y + en.h / 2, '#ec4899', 12);
+      en.hp -= 4.5 + (state.upgrades.gael_ring || 0);
+      spawnParticles(en.x + en.w / 2, en.y + en.h / 2, '#ec4899', 15);
     }
   });
   world.enemies = world.enemies.filter(en => en.hp > 0);
 
-  if (world.boss && !world.boss.defeated && Math.abs(world.boss.x - world.player.x) < 650) {
-    world.boss.hp -= 5 + (state.upgrades.gael_ring || 0);
-    spawnParticles(world.boss.x + world.boss.w / 2, world.boss.y + 40, '#ec4899', 18);
+  if (world.boss && !world.boss.defeated && Math.abs(world.boss.x - world.player.x) < 700) {
+    world.boss.hp -= 5.5 + (state.upgrades.gael_ring || 0);
+    spawnParticles(world.boss.x + world.boss.w / 2, world.boss.y + 45, '#ec4899', 22);
     if (world.boss.hp <= 0) {
       handleBossDefeated();
     }
   }
 
   world.floatingTexts.push({
-    x: world.player.x,
-    y: world.player.y - 24,
-    text: '🎥 ¡FLASH DE GAEL + ACEITE DE DERIAN! 🧴',
-    color: '#f472b6',
-    life: 55
+    x: world.player.x - 20,
+    y: world.player.y - 26,
+    text: '🎥 ¡FLASH WEBCAM DE GAEL + ACEITE DE DERIAN! 🧴',
+    color: '#f9a8d4',
+    life: 60
   });
 }
 
@@ -406,13 +433,13 @@ function handleBossDefeated() {
   world.boss.defeated = true;
   world.boss.hp = 0;
   playSfx('win');
-  spawnParticles(world.boss.x + 30, world.boss.y + 40, '#fbbf24', 30);
+  spawnParticles(world.boss.x + 40, world.boss.y + 50, '#fbbf24', 36);
   world.floatingTexts.push({
-    x: world.boss.x,
-    y: world.boss.y - 20,
+    x: world.boss.x - 20,
+    y: world.boss.y - 24,
     text: `💥 ¡${world.boss.name} DERROTADO!`,
     color: '#fde047',
-    life: 80
+    life: 90
   });
 }
 
@@ -421,11 +448,11 @@ function spawnParticles(x, y, color, count = 8) {
     world.particles.push({
       x,
       y,
-      vx: (Math.random() - 0.5) * 7,
-      vy: (Math.random() - 0.7) * 6,
-      r: 3 + Math.random() * 4,
+      vx: (Math.random() - 0.5) * 7.5,
+      vy: (Math.random() - 0.7) * 6.5,
+      r: 3 + Math.random() * 4.5,
       color,
-      life: 24 + Math.random() * 15
+      life: 24 + Math.random() * 16
     });
   }
 }
@@ -434,6 +461,7 @@ function spawnParticles(x, y, color, count = 8) {
 function updateWorld() {
   if (!state.isPlaying || state.isPausedForDialogue) return;
 
+  world.tick++;
   const p = world.player;
   const cfg = world.levelCfg;
 
@@ -441,6 +469,7 @@ function updateWorld() {
   if (world.flashTimer > 0) world.flashTimer--;
   if (p.invuln > 0) p.invuln--;
   if (p.oilBoostTimer > 0) p.oilBoostTimer--;
+  if (p.shootAnim > 0) p.shootAnim--;
 
   const cdLabel = document.getElementById('special-cd-label');
   if (cdLabel) {
@@ -448,13 +477,12 @@ function updateWorld() {
       world.specialCooldown > 0 ? `${Math.ceil(world.specialCooldown / 60)}s` : 'LISTO';
   }
 
-  // Movimiento horizontal (con efecto resbaloso de aceite de Derian si aplica)
-  const baseSpeed = 4.8 * getSpeedMultiplier() * (p.oilBoostTimer > 0 ? 1.32 : 1);
+  const baseSpeed = 4.9 * getSpeedMultiplier() * (p.oilBoostTimer > 0 ? 1.32 : 1);
   if (keys.left) {
-    p.vx = cfg.slippery ? p.vx * 0.85 - baseSpeed * 0.22 : -baseSpeed;
+    p.vx = cfg.slippery ? p.vx * 0.86 - baseSpeed * 0.22 : -baseSpeed;
     p.facing = -1;
   } else if (keys.right) {
-    p.vx = cfg.slippery ? p.vx * 0.85 + baseSpeed * 0.22 : baseSpeed;
+    p.vx = cfg.slippery ? p.vx * 0.86 + baseSpeed * 0.22 : baseSpeed;
     p.facing = 1;
   } else {
     p.vx *= cfg.slippery ? 0.94 : 0.72;
@@ -462,21 +490,19 @@ function updateWorld() {
 
   p.vx = Math.max(-baseSpeed * 1.35, Math.min(baseSpeed * 1.35, p.vx));
   p.x += p.vx;
-  if (p.x < 10) p.x = 10;
-  if (p.x > cfg.length - 40) p.x = cfg.length - 40;
+  if (p.x < 12) p.x = 12;
+  if (p.x > cfg.length - 48) p.x = cfg.length - 48;
 
-  // Gravedad y salto
   const prevBottom = p.y + p.h;
   p.vy += 0.62;
   p.y += p.vy;
   p.onGround = false;
 
-  // Colisión con plataformas
   for (const plat of world.platforms) {
     if (
-      p.x + p.w > plat.x + 6 &&
-      p.x < plat.x + plat.w - 6 &&
-      prevBottom <= plat.y + 12 &&
+      p.x + p.w > plat.x + 8 &&
+      p.x < plat.x + plat.w - 8 &&
+      prevBottom <= plat.y + 14 &&
       p.y + p.h >= plat.y &&
       p.vy >= 0
     ) {
@@ -487,70 +513,64 @@ function updateWorld() {
     }
   }
 
-  // Caída al vacío
-  if (p.y > canvas.height + 90) {
-    damagePlayer(1, '¡Caíste! Ten cuidado con las lomas y el aceite');
+  if (p.y > LOGICAL_H + 90) {
+    damagePlayer(1, '¡Cuidado con el vacío!');
     p.x = Math.max(80, p.x - 160);
-    p.y = 220;
+    p.y = 200;
     p.vy = 0;
   }
 
-  // Cámara sigue a J
-  const targetCam = p.x - 240;
+  const targetCam = p.x - 250;
   world.cameraX += (targetCam - world.cameraX) * 0.14;
-  world.cameraX = Math.max(0, Math.min(cfg.length - canvas.width, world.cameraX));
+  world.cameraX = Math.max(0, Math.min(cfg.length - LOGICAL_W, world.cameraX));
 
-  // Recoger Huesos Dorados de Jairo
   for (const b of world.bonesList) {
-    if (!b.collected && Math.hypot(p.x + p.w / 2 - b.x, p.y + p.h / 2 - b.y) < 34) {
+    if (!b.collected && Math.hypot(p.x + p.w / 2 - b.x, p.y + p.h / 2 - b.y) < 38) {
       b.collected = true;
       state.bones++;
       saveProgress();
       updateHudUI();
       playSfx('bone');
-      spawnParticles(b.x, b.y, '#fbbf24', 10);
+      spawnParticles(b.x, b.y, '#fbbf24', 12);
       world.floatingTexts.push({
-        x: b.x,
-        y: b.y - 10,
+        x: b.x - 20,
+        y: b.y - 12,
         text: '+1 🦴 Hueso de Jairo',
         color: '#fde047',
-        life: 40
+        life: 42
       });
     }
   }
 
-  // Recoger Frascos de Aceite de Derian
   for (const oil of world.oilBottles) {
-    if (!oil.collected && Math.hypot(p.x + p.w / 2 - oil.x, p.y + p.h / 2 - oil.y) < 36) {
+    if (!oil.collected && Math.hypot(p.x + p.w / 2 - oil.x, p.y + p.h / 2 - oil.y) < 40) {
       oil.collected = true;
       p.oilBoostTimer = 300;
       if (p.hp < p.maxHp) p.hp++;
       updateHudUI();
       playSfx('special');
-      spawnParticles(oil.x, oil.y, '#eab308', 14);
+      spawnParticles(oil.x, oil.y, '#eab308', 16);
       world.floatingTexts.push({
-        x: oil.x,
-        y: oil.y - 15,
+        x: oil.x - 30,
+        y: oil.y - 16,
         text: '🧴 ¡ACEITE DE DERIAN! (+Vida y Turbo)',
-        color: '#facc15',
+        color: '#fef08a',
         life: 55
       });
     }
   }
 
-  // Actualizar proyectiles de J y Gael
   for (let i = world.projectiles.length - 1; i >= 0; i--) {
     const proj = world.projectiles[i];
     proj.x += proj.vx;
     proj.y += proj.vy;
 
-    if (proj.x < world.cameraX - 50 || proj.x > world.cameraX + canvas.width + 50) {
+    if (proj.x < world.cameraX - 60 || proj.x > world.cameraX + LOGICAL_W + 60) {
       world.projectiles.splice(i, 1);
       continue;
     }
 
     let hit = false;
-    // Impacto contra enemigos
     for (let j = world.enemies.length - 1; j >= 0; j--) {
       const en = world.enemies[j];
       if (
@@ -560,22 +580,21 @@ function updateWorld() {
         proj.y < en.y + en.h
       ) {
         en.hp -= proj.damage;
-        spawnParticles(proj.x, proj.y, proj.color, 6);
+        spawnParticles(proj.x, proj.y, proj.color, 7);
         hit = true;
         if (en.hp <= 0) {
-          spawnParticles(en.x + en.w / 2, en.y + en.h / 2, '#f97316', 14);
+          spawnParticles(en.x + en.w / 2, en.y + en.h / 2, '#f97316', 16);
           world.enemies.splice(j, 1);
         }
         break;
       }
     }
 
-    // Impacto contra Jefe (Javier / Mega-Dron / Jair)
     if (!hit && world.boss && !world.boss.defeated) {
       const b = world.boss;
       if (proj.x > b.x && proj.x < b.x + b.w && proj.y > b.y && proj.y < b.y + b.h) {
         b.hp -= proj.damage;
-        spawnParticles(proj.x, proj.y, '#ef4444', 8);
+        spawnParticles(proj.x, proj.y, '#ef4444', 9);
         hit = true;
         if (b.hp <= 0) {
           handleBossDefeated();
@@ -588,40 +607,36 @@ function updateWorld() {
     }
   }
 
-  // Actualizar enemigos
   for (const en of world.enemies) {
     en.x += en.vx;
     if (en.x < en.minX || en.x > en.maxX) en.vx *= -1;
 
-    // Disparo enemigo ocasional
     en.shootTimer--;
-    if (en.shootTimer <= 0 && Math.abs(en.x - p.x) < 420) {
-      en.shootTimer = 110;
+    if (en.shootTimer <= 0 && Math.abs(en.x - p.x) < 430) {
+      en.shootTimer = 115;
       const dir = p.x < en.x ? -1 : 1;
       world.enemyProjectiles.push({
         x: en.x + en.w / 2,
-        y: en.y + 20,
+        y: en.y + 24,
         vx: dir * 5.2,
         vy: 0,
-        r: 6,
+        r: 7,
         color: en.type === 'usher' ? '#fde047' : '#ef4444'
       });
     }
 
-    // Colisión con J
     if (
       p.invuln <= 0 &&
-      p.x + p.w > en.x + 4 &&
-      p.x < en.x + en.w - 4 &&
-      p.y + p.h > en.y + 4 &&
-      p.y < en.y + en.h - 4
+      p.x + p.w > en.x + 6 &&
+      p.x < en.x + en.w - 6 &&
+      p.y + p.h > en.y + 6 &&
+      p.y < en.y + en.h - 6
     ) {
-      // Si J cae encima del enemigo lo aplasta
-      if (p.vy > 1 && prevBottom <= en.y + 18) {
+      if (p.vy > 1 && prevBottom <= en.y + 22) {
         en.hp = 0;
-        p.vy = -10;
+        p.vy = -10.5;
         playSfx('jump');
-        spawnParticles(en.x + 18, en.y + 20, '#fbbf24', 12);
+        spawnParticles(en.x + 22, en.y + 24, '#fbbf24', 14);
       } else {
         damagePlayer(1);
       }
@@ -629,9 +644,8 @@ function updateWorld() {
   }
   world.enemies = world.enemies.filter(en => en.hp > 0);
 
-  // Actualizar Jefe (Javier o Jair)
   const bossHud = document.getElementById('boss-hud');
-  if (world.boss && !world.boss.defeated && p.x > world.goalX - 550) {
+  if (world.boss && !world.boss.defeated && p.x > world.goalX - 580) {
     bossHud.classList.remove('hidden');
     const b = world.boss;
     document.getElementById('boss-name').textContent = `😈 JEFE: ${b.name}`;
@@ -649,8 +663,8 @@ function updateWorld() {
     }
     b.vy += 0.55;
     b.y += b.vy;
-    if (b.y > 334) {
-      b.y = 334;
+    if (b.y > 315) {
+      b.y = 315;
       b.vy = 0;
     }
 
@@ -658,22 +672,21 @@ function updateWorld() {
     if (b.attackTimer <= 0) {
       b.attackTimer = 58;
       const dir = p.x < b.x ? -1 : 1;
-      // Javier lanza bombas de crispetas, Jair lanza ondas rojas dobles
       world.enemyProjectiles.push({
         x: b.x + b.w / 2,
-        y: b.y + 34,
+        y: b.y + 42,
         vx: dir * 6.8,
-        vy: -1.2,
-        r: 9,
+        vy: -1.1,
+        r: 10,
         color: b.id.includes('javier') ? '#fde047' : '#ef4444'
       });
       if (b.id === 'jair_final') {
         world.enemyProjectiles.push({
           x: b.x + b.w / 2,
-          y: b.y + 62,
+          y: b.y + 72,
           vx: dir * 7.6,
           vy: 0.4,
-          r: 8,
+          r: 9,
           color: '#ec4899'
         });
       }
@@ -681,10 +694,10 @@ function updateWorld() {
 
     if (
       p.invuln <= 0 &&
-      p.x + p.w > b.x + 6 &&
-      p.x < b.x + b.w - 6 &&
-      p.y + p.h > b.y + 6 &&
-      p.y < b.y + b.h - 6
+      p.x + p.w > b.x + 10 &&
+      p.x < b.x + b.w - 10 &&
+      p.y + p.h > b.y + 10 &&
+      p.y < b.y + b.h - 10
     ) {
       damagePlayer(1);
     }
@@ -692,7 +705,6 @@ function updateWorld() {
     bossHud.classList.add('hidden');
   }
 
-  // Proyectiles enemigos
   for (let i = world.enemyProjectiles.length - 1; i >= 0; i--) {
     const ep = world.enemyProjectiles[i];
     ep.x += ep.vx;
@@ -705,12 +717,11 @@ function updateWorld() {
       world.enemyProjectiles.splice(i, 1);
       continue;
     }
-    if (ep.x < world.cameraX - 80 || ep.x > world.cameraX + canvas.width + 80) {
+    if (ep.x < world.cameraX - 80 || ep.x > world.cameraX + LOGICAL_W + 80) {
       world.enemyProjectiles.splice(i, 1);
     }
   }
 
-  // Partículas y textos flotantes
   for (let i = world.particles.length - 1; i >= 0; i--) {
     const pt = world.particles[i];
     pt.x += pt.vx;
@@ -726,12 +737,11 @@ function updateWorld() {
     if (ft.life <= 0) world.floatingTexts.splice(i, 1);
   }
 
-  // Verificar llegada a la meta / jaula de Jairo
-  if (Math.abs(p.x - world.goalX) < 48 && p.y > 260) {
+  if (Math.abs(p.x - world.goalX) < 52 && p.y > 240) {
     if (world.boss && !world.boss.defeated) {
       world.floatingTexts.push({
-        x: world.goalX - 40,
-        y: 310,
+        x: world.goalX - 50,
+        y: 300,
         text: '🔒 ¡Derrota al Jefe primero!',
         color: '#fca5a5',
         life: 20
@@ -759,203 +769,448 @@ function damagePlayer(amount, customMsg = null) {
   }
 }
 
-// ---------------- RENDERIZADO DEL CANVAS ----------------
+// ============================================================================
+// RENDERIZADO GRÁFICO HD CON SPRITES VECTORIALES Y PARALAJE MULTICAPA
+// ============================================================================
+function drawSpriteCharacter(spriteId, x, y, w, h, facing = 1, isMoving = false, bounceSpeed = 0.22) {
+  const img = SPRITE_CACHE[spriteId];
+  ctx.save();
+
+  // Sombra elíptica suave bajo los pies
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  ctx.beginPath();
+  ctx.ellipse(x + w / 2, y + h - 2, w * 0.42, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  const walkCycle = isMoving ? Math.sin(world.tick * bounceSpeed) : 0;
+  const bobY = isMoving ? Math.abs(walkCycle) * -5 : Math.sin(world.tick * 0.06) * 2;
+
+  // Piernas animadas estilo arcade
+  ctx.strokeStyle = spriteId === 'j' ? '#1e293b' : spriteId === 'javier' ? '#1e3a8a' : '#0f172a';
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+
+  const hipX = x + w / 2;
+  const hipY = y + h - 16 + bobY;
+  const legSpread = walkCycle * 10;
+
+  ctx.beginPath();
+  ctx.moveTo(hipX - 5, hipY);
+  ctx.lineTo(hipX - 6 - legSpread, y + h - 3);
+  ctx.moveTo(hipX + 5, hipY);
+  ctx.lineTo(hipX + 6 + legSpread, y + h - 3);
+  ctx.stroke();
+
+  // Botas / tenis
+  ctx.fillStyle = spriteId === 'j' ? '#f59e0b' : '#ef4444';
+  ctx.fillRect(hipX - 11 - legSpread, y + h - 6, 10, 5);
+  ctx.fillRect(hipX + 1 + legSpread, y + h - 6, 10, 5);
+
+  // Dibujar el Sprite Vectorial HD con volteo horizontal según dirección
+  ctx.translate(x + w / 2, y + h / 2 + bobY - 4);
+  ctx.scale(facing, 1);
+  if (isMoving) {
+    ctx.rotate(walkCycle * 0.05);
+  }
+
+  if (img && img.complete) {
+    ctx.drawImage(img, -w * 0.68, -h * 0.62, w * 1.36, h * 1.22);
+  } else {
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillRect(-w / 2, -h / 2, w, h);
+  }
+
+  ctx.restore();
+}
+
+function drawParallaxBackground(cfg) {
+  // 1. Cielo nocturno profundo con gradiente rico
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, LOGICAL_H);
+  if (cfg.theme === 'cinema') {
+    skyGrad.addColorStop(0, '#1a0514');
+    skyGrad.addColorStop(0.5, '#310a24');
+    skyGrad.addColorStop(1, '#090611');
+  } else if (cfg.theme.includes('sanjorge')) {
+    skyGrad.addColorStop(0, '#0d0626');
+    skyGrad.addColorStop(0.55, '#1e1145');
+    skyGrad.addColorStop(1, '#08142c');
+  } else if (cfg.theme === 'derian_spa') {
+    skyGrad.addColorStop(0, '#271504');
+    skyGrad.addColorStop(0.55, '#422306');
+    skyGrad.addColorStop(1, '#120b04');
+  } else if (cfg.theme.includes('virocasa')) {
+    skyGrad.addColorStop(0, '#24050e');
+    skyGrad.addColorStop(0.5, '#3b0918');
+    skyGrad.addColorStop(1, '#090d1a');
+  } else {
+    skyGrad.addColorStop(0, '#070c1e');
+    skyGrad.addColorStop(0.55, '#111e3d');
+    skyGrad.addColorStop(1, '#060a14');
+  }
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+  // Luna llena brillante y estrellas
+  ctx.save();
+  ctx.fillStyle = 'rgba(254, 240, 138, 0.14)';
+  ctx.beginPath();
+  ctx.arc(820, 82, 58, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#fef08a';
+  ctx.beginPath();
+  ctx.arc(820, 82, 34, 0, Math.PI * 2);
+  ctx.fill();
+
+  for (let i = 0; i < 24; i++) {
+    const sx = ((i * 97) % LOGICAL_W);
+    const sy = ((i * 43) % 210);
+    const alpha = 0.35 + Math.sin(world.tick * 0.04 + i) * 0.3;
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.fillRect(sx, sy, 2.2, 2.2);
+  }
+  ctx.restore();
+
+  // 2. Montañas lejanas de Manizales y Cables Aéreos (Paralaje 0.15x)
+  ctx.save();
+  const farOffset = -(world.cameraX * 0.15) % 960;
+  for (let base = farOffset - 960; base < LOGICAL_W + 960; base += 960) {
+    ctx.fillStyle = 'rgba(8, 12, 26, 0.85)';
+    ctx.beginPath();
+    ctx.moveTo(base, LOGICAL_H);
+    ctx.lineTo(base, 310);
+    ctx.quadraticCurveTo(base + 240, 210, base + 480, 295);
+    ctx.quadraticCurveTo(base + 720, 190, base + 960, 310);
+    ctx.lineTo(base + 960, LOGICAL_H);
+    ctx.closePath();
+    ctx.fill();
+
+    // Línea del Cable Aéreo de Manizales / San Jorge
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(base, 170);
+    ctx.lineTo(base + 960, 130);
+    ctx.stroke();
+
+    // Cabina del cable animada
+    const cabinX = base + ((world.tick * 1.2) % 960);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(cabinX, 152, 24, 18);
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(cabinX + 4, 155, 16, 8);
+  }
+  ctx.restore();
+
+  // 3. Edificios Temáticos en Plano Medio (Paralaje 0.4x)
+  ctx.save();
+  const midOffset = -(world.cameraX * 0.4) % 440;
+  for (let bx = midOffset - 440; bx < LOGICAL_W + 440; bx += 440) {
+    // Silueta de edificios
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+    ctx.fillRect(bx + 20, 165, 180, 280);
+    ctx.fillRect(bx + 220, 195, 190, 250);
+
+    // Bordes de neón según el nivel
+    ctx.strokeStyle =
+      cfg.theme === 'cinema'
+        ? '#3b82f6'
+        : cfg.theme.includes('gael')
+        ? '#ec4899'
+        : cfg.theme === 'derian_spa'
+        ? '#eab308'
+        : '#f59e0b';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(bx + 20, 165, 180, 280);
+    ctx.strokeRect(bx + 220, 195, 190, 250);
+
+    // Ventanas iluminadas
+    ctx.fillStyle = 'rgba(253, 224, 71, 0.22)';
+    for (let wy = 190; wy < 380; wy += 42) {
+      ctx.fillRect(bx + 42, wy, 28, 22);
+      ctx.fillRect(bx + 92, wy, 28, 22);
+      ctx.fillRect(bx + 142, wy, 28, 22);
+    }
+
+    // Letrero luminoso temático en el edificio
+    ctx.fillStyle = 'rgba(9, 13, 24, 0.92)';
+    ctx.fillRect(bx + 235, 215, 160, 54);
+    ctx.strokeStyle = '#fde047';
+    ctx.strokeRect(bx + 235, 215, 160, 54);
+
+    ctx.fillStyle = '#fde047';
+    ctx.font = 'bold 12px Segoe UI, sans-serif';
+    let titleSign = '🏠 VIROCENTRO';
+    let subSign = 'CASA DE DOÑA SANDRA';
+    if (cfg.theme === 'cinema') {
+      titleSign = '🍿 CINE VIP: SALA 4';
+      subSign = 'J & JAVIER (¿NOVIOS?)';
+    } else if (cfg.theme === 'sanjorge') {
+      titleSign = '⛰️ BARRIO SAN JORGE';
+      subSign = 'RUTA DE RESCATE';
+    } else if (cfg.theme === 'sanjorge_gael') {
+      titleSign = '🎥 GAEL STREAM VIP';
+      subSign = 'SAN JORGE • +10K TOKENS';
+    } else if (cfg.theme === 'derian_spa') {
+      titleSign = '🧴 SPA DE DERIAN';
+      subSign = 'MASAJES EN ACEITE PURO';
+    } else if (cfg.theme.includes('virocasa')) {
+      titleSign = '🚨 FORTALEZA VIROCASA';
+      subSign = 'GUARIDA FINAL DE JAIR';
+    }
+    ctx.fillText(titleSign, bx + 246, 238);
+    ctx.fillStyle = '#f472b6';
+    ctx.font = 'bold 10px Segoe UI, sans-serif';
+    ctx.fillText(subSign, bx + 246, 256);
+  }
+  ctx.restore();
+}
+
+function drawPlatform3D(plat) {
+  const isOil = plat.type.includes('oil');
+  ctx.save();
+
+  // Sombra inferior
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.fillRect(plat.x + 4, plat.y + 6, plat.w, plat.h);
+
+  // Cuerpo de la plataforma con gradiente 3D
+  const pGrad = ctx.createLinearGradient(0, plat.y, 0, plat.y + plat.h);
+  if (isOil) {
+    pGrad.addColorStop(0, '#713f12');
+    pGrad.addColorStop(1, '#271504');
+  } else {
+    pGrad.addColorStop(0, '#334155');
+    pGrad.addColorStop(1, '#0f172a');
+  }
+  ctx.fillStyle = pGrad;
+  ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+
+  // Borde metálico / arquitectónico
+  ctx.strokeStyle = isOil ? '#eab308' : '#475569';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
+
+  // Superficie superior (Aceite brillante de Derian con gotas o borde neón)
+  if (isOil) {
+    ctx.fillStyle = '#facc15';
+    ctx.fillRect(plat.x, plat.y, plat.w, 8);
+    ctx.fillStyle = '#fef08a';
+    ctx.fillRect(plat.x + 6, plat.y + 1, plat.w - 12, 3);
+    // Gotas de aceite escurriendo
+    for (let ox = plat.x + 22; ox < plat.x + plat.w - 18; ox += 38) {
+      const drip = 6 + Math.sin(world.tick * 0.08 + ox) * 3;
+      ctx.beginPath();
+      ctx.arc(ox, plat.y + 8 + drip, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#eab308';
+      ctx.fill();
+    }
+  } else {
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillRect(plat.x, plat.y, plat.w, 6);
+    ctx.fillStyle = '#fde68a';
+    ctx.fillRect(plat.x + 4, plat.y + 1, plat.w - 8, 2);
+  }
+
+  ctx.restore();
+}
+
 function renderWorld() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
   const cfg = world.levelCfg;
   if (!cfg) return;
 
-  // Fondo temático según la locación (Virocentro, Cine, San Jorge, Spa de Derian, Virocasa)
-  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  if (cfg.theme === 'cinema') {
-    grad.addColorStop(0, '#2a0818');
-    grad.addColorStop(1, '#090712');
-  } else if (cfg.theme.includes('sanjorge')) {
-    grad.addColorStop(0, '#1e1035');
-    grad.addColorStop(1, '#081226');
-  } else if (cfg.theme === 'derian_spa') {
-    grad.addColorStop(0, '#362207');
-    grad.addColorStop(1, '#0f0c06');
-  } else if (cfg.theme.includes('virocasa')) {
-    grad.addColorStop(0, '#2b0912');
-    grad.addColorStop(1, '#090d1a');
-  } else {
-    grad.addColorStop(0, '#0f172a');
-    grad.addColorStop(1, '#060913');
-  }
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawParallaxBackground(cfg);
 
-  // Flash del Aro de Luz de Gael cuando usa el poder especial
   if (world.flashTimer > 0) {
     ctx.fillStyle = `rgba(236, 72, 153, ${world.flashTimer / 45})`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
   }
-
-  // Carteles decorativos de fondo en paralaje
-  ctx.save();
-  const bgOffset = -(world.cameraX * 0.35) % 480;
-  for (let x = bgOffset; x < canvas.width + 480; x += 480) {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-    ctx.fillRect(x + 40, 90, 220, 95);
-    ctx.strokeStyle = 'rgba(251, 191, 36, 0.22)';
-    ctx.strokeRect(x + 40, 90, 220, 95);
-
-    ctx.fillStyle = 'rgba(253, 224, 71, 0.55)';
-    ctx.font = 'bold 14px Segoe UI, sans-serif';
-    let signText = '📍 VIROCENTRO';
-    if (cfg.theme === 'cinema') signText = '🍿 CINE VIP: J & JAVIER';
-    else if (cfg.theme === 'sanjorge') signText = '⛰️ LOMAS DE SAN JORGE';
-    else if (cfg.theme === 'sanjorge_gael') signText = '🎥 GAEL WEBCAM STUDIO • SAN JORGE';
-    else if (cfg.theme === 'derian_spa') signText = '🧴 MASAJES EN ACEITE DERIAN';
-    else if (cfg.theme.includes('virocasa')) signText = '🏠 FORTALEZA VIROCASA';
-    ctx.fillText(signText, x + 55, 138);
-  }
-  ctx.restore();
 
   ctx.save();
   ctx.translate(-world.cameraX, 0);
 
-  // Dibujar Plataformas
+  // 1. Plataformas 3D
   for (const plat of world.platforms) {
-    if (plat.type.includes('oil')) {
-      ctx.fillStyle = '#854d0e';
-      ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-      // Capa superior de aceite brillante de Derian
-      ctx.fillStyle = '#facc15';
-      ctx.fillRect(plat.x, plat.y, plat.w, 6);
-    } else {
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-      ctx.fillStyle = '#fbbf24';
-      ctx.fillRect(plat.x, plat.y, plat.w, 4);
-    }
+    drawPlatform3D(plat);
   }
 
-  // Dibujar Huesos Dorados de Jairo
+  // 2. Huesos Dorados de Jairo (Dibujados vectorialmente con brillo)
   for (const b of world.bonesList) {
     if (b.collected) continue;
-    ctx.font = '22px Segoe UI Emoji, sans-serif';
-    ctx.fillText('🦴', b.x - 11, b.y + 8);
+    const floatY = b.y + Math.sin(world.tick * 0.09 + b.x) * 5;
+    ctx.save();
+    ctx.translate(b.x, floatY);
+    ctx.fillStyle = 'rgba(251, 191, 36, 0.25)';
+    ctx.beginPath();
+    ctx.arc(0, 0, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fde047';
+    ctx.strokeStyle = '#b45309';
+    ctx.lineWidth = 2;
+    ctx.fillRect(-9, -4, 18, 8);
+    ctx.beginPath();
+    ctx.arc(-10, -5, 5, 0, Math.PI * 2);
+    ctx.arc(-10, 5, 5, 0, Math.PI * 2);
+    ctx.arc(10, -5, 5, 0, Math.PI * 2);
+    ctx.arc(10, 5, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
   }
 
-  // Dibujar Frascos de Aceite de Derian
+  // 3. Frascos de Aceite de Derian
   for (const oil of world.oilBottles) {
     if (oil.collected) continue;
-    ctx.font = '24px Segoe UI Emoji, sans-serif';
-    ctx.fillText('🧴', oil.x - 12, oil.y + 8);
+    const floatY = oil.y + Math.sin(world.tick * 0.08 + oil.x) * 5;
+    ctx.save();
+    ctx.translate(oil.x, floatY);
+    ctx.fillStyle = 'rgba(234, 179, 8, 0.28)';
+    ctx.beginPath();
+    ctx.arc(0, 0, 22, 0, Math.PI * 2);
+    ctx.fill();
+    if (SPRITE_CACHE.derian && SPRITE_CACHE.derian.complete) {
+      ctx.drawImage(SPRITE_CACHE.derian, -22, -24, 44, 48);
+    }
+    ctx.fillStyle = '#fef08a';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.fillText('🧴 ACEITE', -22, 30);
+    ctx.restore();
   }
 
-  // Dibujar Meta o Jaula Dorada de Jairo en el Nivel 10
+  // 4. Meta del Nivel o Jaula Dorada con el Sprite HD de Jairo
   if (cfg.level === 10) {
-    // Jaula Dorada con Jairo adentro
-    ctx.fillStyle = 'rgba(251, 191, 36, 0.18)';
-    ctx.fillRect(world.goalX - 28, 355, 68, 75);
-    ctx.font = '38px Segoe UI Emoji, sans-serif';
-    ctx.fillText('🐶', world.goalX - 14, 408);
+    ctx.save();
+    const cageX = world.goalX - 36;
+    const cageY = 335;
+    ctx.fillStyle = 'rgba(251, 191, 36, 0.16)';
+    ctx.fillRect(cageX, cageY, 80, 90);
+    if (SPRITE_CACHE.jairo && SPRITE_CACHE.jairo.complete) {
+      const jairoBounce = Math.abs(Math.sin(world.tick * 0.12)) * -8;
+      ctx.drawImage(SPRITE_CACHE.jairo, cageX + 6, cageY + 10 + jairoBounce, 68, 76);
+    }
+    // Barrotes dorados de la jaula
     ctx.strokeStyle = '#fbbf24';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(world.goalX - 28, 355, 68, 75);
+    ctx.lineWidth = 4;
+    ctx.strokeRect(cageX, cageY, 80, 90);
+    for (let bx = cageX + 16; bx < cageX + 80; bx += 16) {
+      ctx.beginPath();
+      ctx.moveTo(bx, cageY);
+      ctx.lineTo(bx, cageY + 90);
+      ctx.stroke();
+    }
     ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.fillText('¡JAIRO!', world.goalX - 16, 345);
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('🐶 ¡RESCATA A JAIRO!', cageX - 24, cageY - 10);
+    ctx.restore();
   } else {
-    ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
-    ctx.fillRect(world.goalX - 20, 350, 50, 80);
+    ctx.save();
+    const portalX = world.goalX;
+    ctx.fillStyle = 'rgba(16, 185, 129, 0.24)';
+    ctx.beginPath();
+    ctx.arc(portalX, 380, 38, 0, Math.PI * 2);
+    ctx.fill();
     ctx.strokeStyle = '#10b981';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(world.goalX - 20, 350, 50, 80);
-    ctx.font = '28px Segoe UI Emoji, sans-serif';
-    ctx.fillText('🚩', world.goalX - 10, 398);
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = '#6ee7b7';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('META ▸', portalX - 22, 332);
+    ctx.restore();
   }
 
-  // Dibujar Enemigos
+  // 5. Enemigos con Sprites Vectoriales HD
   for (const en of world.enemies) {
-    ctx.fillStyle = en.type === 'usher' ? '#2563eb' : en.type === 'drone' ? '#9333ea' : '#dc2626';
-    ctx.fillRect(en.x, en.y, en.w, en.h);
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(en.x, en.y, en.w, en.h);
-    ctx.font = '20px Segoe UI Emoji, sans-serif';
-    const icon = en.type === 'usher' ? '🍿' : en.type === 'drone' ? '🛸' : '🕶️';
-    ctx.fillText(icon, en.x + 6, en.y + 29);
+    const facing = en.vx >= 0 ? 1 : -1;
+    drawSpriteCharacter(en.type, en.x, en.y, en.w, en.h, facing, true, 0.18);
+
+    // Barra de vida sobre el enemigo
+    ctx.fillStyle = 'rgba(0,0,0,0.65)';
+    ctx.fillRect(en.x + 4, en.y - 10, en.w - 8, 5);
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(en.x + 4, en.y - 10, ((en.w - 8) * Math.max(0, en.hp)) / en.maxHp, 5);
   }
 
-  // Dibujar Jefe (Javier / Mega-Dron / Jair)
+  // 6. Jefe del Nivel (Javier / Mega-Dron / Jair) con Sprite HD
   if (world.boss && !world.boss.defeated) {
     const b = world.boss;
-    ctx.fillStyle = b.color;
-    ctx.fillRect(b.x, b.y, b.w, b.h);
-    ctx.strokeStyle = '#fde047';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(b.x, b.y, b.w, b.h);
+    const facing = world.player.x < b.x ? -1 : 1;
 
-    ctx.font = '32px Segoe UI Emoji, sans-serif';
-    const bossEmoji = b.id.includes('javier') ? '🍿' : b.id.includes('drone') ? '🤖' : '😈';
-    ctx.fillText(bossEmoji, b.x + 14, b.y + 52);
+    // Aura de jefe
+    ctx.save();
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+    ctx.beginPath();
+    ctx.arc(b.x + b.w / 2, b.y + b.h / 2, 62, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
 
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.fillText(b.id.includes('javier') ? 'JAVIER' : 'JAIR', b.x + 10, b.y - 8);
-  }
-
-  // Dibujar a J (Jugador)
-  const p = world.player;
-  if (p.invuln % 6 < 4) {
-    // Aura de Aceite Turbo de Derian si está activo
-    if (p.oilBoostTimer > 0) {
-      ctx.beginPath();
-      ctx.arc(p.x + p.w / 2, p.y + p.h / 2, 34, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(250, 204, 21, 0.25)';
-      ctx.fill();
-    }
-
-    ctx.fillStyle = '#111827';
-    ctx.fillRect(p.x, p.y, p.w, p.h);
-    ctx.strokeStyle = '#f59e0b';
-    ctx.lineWidth = 2.5;
-    ctx.strokeRect(p.x, p.y, p.w, p.h);
-
-    // Cabeza y banda de rescate de J
-    ctx.fillStyle = '#f1c29b';
-    ctx.fillRect(p.x + 6, p.y + 6, p.w - 12, 20);
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(p.x + 4, p.y + 4, p.w - 8, 5);
+    drawSpriteCharacter(b.spriteId, b.x, b.y, b.w, b.h, facing, true, 0.16);
 
     ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.fillText('J', p.x + 15, p.y + 44);
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(b.name, b.x - 18, b.y - 12);
   }
 
-  // Dibujar a GAEL flotando junto a J con su Aro de Luz LED (Nivel 5+)
+  // 7. Jugador J con Sprite HD y animaciones
+  const p = world.player;
+  if (p.invuln % 6 < 4) {
+    if (p.oilBoostTimer > 0) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(250, 204, 21, 0.26)';
+      ctx.beginPath();
+      ctx.arc(p.x + p.w / 2, p.y + p.h / 2, 42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    const isMoving = Math.abs(p.vx) > 0.4 && p.onGround;
+    drawSpriteCharacter('j', p.x, p.y, p.w, p.h, p.facing, isMoving, 0.25);
+  }
+
+  // 8. Aliado GAEL flotando junto a J con su Sprite HD y Aro de Luz LED
   if (p.hasGael) {
-    const gx = p.x - p.facing * 34;
-    const gy = p.y - 16 + Math.sin(Date.now() * 0.008) * 6;
-    ctx.beginPath();
-    ctx.arc(gx + 14, gy + 14, 18, 0, Math.PI * 2);
+    const gx = p.x - p.facing * 48;
+    const gy = p.y - 22 + Math.sin(world.tick * 0.09) * 7;
+    ctx.save();
     ctx.strokeStyle = '#ec4899';
-    ctx.lineWidth = 3.5;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(gx + 22, gy + 24, 26, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.font = '18px Segoe UI Emoji, sans-serif';
-    ctx.fillText('🎥', gx + 4, gy + 20);
+    if (SPRITE_CACHE.gael && SPRITE_CACHE.gael.complete) {
+      ctx.drawImage(SPRITE_CACHE.gael, gx - 2, gy - 2, 48, 54);
+    }
+    ctx.restore();
   }
 
-  // Proyectiles
+  // 9. Proyectiles con estela luminosa
   for (const proj of world.projectiles) {
+    ctx.save();
+    ctx.shadowColor = proj.glow || proj.color;
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = proj.color;
     ctx.beginPath();
     ctx.arc(proj.x, proj.y, proj.r, 0, Math.PI * 2);
-    ctx.fillStyle = proj.color;
     ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(proj.x, proj.y, proj.r * 0.45, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 
   for (const ep of world.enemyProjectiles) {
+    ctx.save();
+    ctx.shadowColor = ep.color;
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = ep.color;
     ctx.beginPath();
     ctx.arc(ep.x, ep.y, ep.r, 0, Math.PI * 2);
-    ctx.fillStyle = ep.color;
     ctx.fill();
+    ctx.restore();
   }
 
-  // Partículas
+  // 10. Partículas y textos flotantes
   for (const pt of world.particles) {
     ctx.fillStyle = pt.color;
     ctx.beginPath();
@@ -963,10 +1218,9 @@ function renderWorld() {
     ctx.fill();
   }
 
-  // Textos flotantes
   for (const ft of world.floatingTexts) {
     ctx.fillStyle = ft.color;
-    ctx.font = 'bold 14px sans-serif';
+    ctx.font = 'bold 14px Segoe UI, sans-serif';
     ctx.fillText(ft.text, ft.x, ft.y);
   }
 
@@ -987,6 +1241,7 @@ function startLevel(levelNum) {
   document.getElementById('menu-screen').classList.add('hidden');
   document.getElementById('play-screen').classList.remove('hidden');
   closeModal('modal-result');
+  setupHiDPICanvas();
 
   state.isPlaying = true;
   const cfg = world.levelCfg;
@@ -1163,8 +1418,8 @@ function renderCastStripAndModal() {
       <div class="char-card-top">
         <div class="char-card-svg">${getRescueCharSVG(ch.id)}</div>
         <div>
-          <strong style="color:${ch.color}; font-size:1rem;">${ch.name}</strong>
-          <div style="font-size:0.75rem; color:#fde047; font-weight:800;">${ch.role}</div>
+          <strong style="color:${ch.color}; font-size:1.05rem;">${ch.name}</strong>
+          <div style="font-size:0.76rem; color:#fde047; font-weight:800;">${ch.role}</div>
         </div>
       </div>
       <p>${ch.bio}</p>
@@ -1224,11 +1479,66 @@ function closeModal(id) {
   document.getElementById(id)?.classList.add('hidden');
 }
 
-// ---------------- EVENTOS E INICIALIZACIÓN ----------------
+// ---------------- CONTROLES TÁCTILES MULTI-TOUCH Y RESPONSIVE ----------------
+function setupResponsiveControls() {
+  const bindHold = (id, keyName) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const activate = (e) => {
+      e.preventDefault();
+      keys[keyName] = true;
+      el.classList.add('ctrl-active');
+    };
+    const deactivate = (e) => {
+      e.preventDefault();
+      keys[keyName] = false;
+      el.classList.remove('ctrl-active');
+    };
+
+    el.addEventListener('touchstart', activate, { passive: false });
+    el.addEventListener('touchend', deactivate, { passive: false });
+    el.addEventListener('touchcancel', deactivate, { passive: false });
+    el.addEventListener('mousedown', activate);
+    el.addEventListener('mouseup', deactivate);
+    el.addEventListener('mouseleave', deactivate);
+  };
+
+  bindHold('ctrl-left', 'left');
+  bindHold('ctrl-right', 'right');
+
+  const bindTap = (id, actionFn) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener(
+      'touchstart',
+      (e) => {
+        e.preventDefault();
+        el.classList.add('ctrl-active');
+        actionFn();
+      },
+      { passive: false }
+    );
+    el.addEventListener('touchend', () => el.classList.remove('ctrl-active'));
+    el.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      actionFn();
+    });
+  };
+
+  bindTap('ctrl-jump', triggerJump);
+  bindTap('ctrl-shoot', triggerShoot);
+  bindTap('ctrl-special', triggerSpecialPower);
+}
+
+// ---------------- INICIALIZACIÓN ----------------
 document.addEventListener('DOMContentLoaded', () => {
+  preloadSprites();
+  setupHiDPICanvas();
   renderMenuLevels();
   renderCastStripAndModal();
   buildLevelWorld(state.maxUnlockedLevel);
+  setupResponsiveControls();
   requestAnimationFrame(gameLoop);
 
   document.getElementById('btn-play-continue').addEventListener('click', () => {
@@ -1285,7 +1595,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => closeModal(btn.dataset.close));
   });
 
-  // Controles de Teclado
   window.addEventListener('keydown', (e) => {
     if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
     if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
@@ -1306,19 +1615,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
     if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
   });
-
-  // Controles Táctiles / Mouse en pantalla
-  const bindHold = (id, keyName) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('pointerdown', () => { keys[keyName] = true; });
-    el.addEventListener('pointerup', () => { keys[keyName] = false; });
-    el.addEventListener('pointerleave', () => { keys[keyName] = false; });
-  };
-  bindHold('ctrl-left', 'left');
-  bindHold('ctrl-right', 'right');
-
-  document.getElementById('ctrl-jump').addEventListener('click', triggerJump);
-  document.getElementById('ctrl-shoot').addEventListener('click', triggerShoot);
-  document.getElementById('ctrl-special').addEventListener('click', triggerSpecialPower);
 });

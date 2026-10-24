@@ -1,5 +1,5 @@
 // ============================================================================
-// JAIRO RESCUEE — BASE DE DATOS DE PERSONAJES, HISTORIA Y 10 NIVELES ARCADE
+// JAIRO RESCUEE — BASE DE DATOS DE PERSONAJES HD, HISTORIA Y 10 NIVELES ARCADE
 // ============================================================================
 
 const RESCUE_CHARACTERS = {
@@ -9,7 +9,7 @@ const RESCUE_CHARACTERS = {
     role: 'Héroe Rescatista (Jugador)',
     color: '#f59e0b',
     badge: '🏃‍♂️ Protagonista',
-    bio: 'Cuando secuestran a su Pomerania Jairo en Virocentro, J deja todo tirado y sale a recorrer Virocentro, el Cine, las lomas de San Jorge y Virocasa. Cuenta con doble salto, disparo de impacto y la ayuda de sus amigos más exóticos.',
+    bio: 'Cuando secuestran a su Pomerania Jairo en Virocentro, J se pone su chaqueta táctica y sale a recorrer Virocentro, el Cine, las lomas de San Jorge y Virocasa. Cuenta con doble salto acrobático, disparo de energía y la ayuda de sus amigos.',
     traits: ['Dueño de Jairo', 'Mejor Amigo de Cine de Javier', 'Aliado de Gael y Derian']
   },
   jairo: {
@@ -18,7 +18,7 @@ const RESCUE_CHARACTERS = {
     role: 'El Pomerania Secuestrado',
     color: '#fbbf24',
     badge: '🐶 Objetivo del Rescate',
-    bio: 'El Pomerania más esponjoso y consentido de Virocentro. Fue secuestrado por Jair y Javier, aunque antes del secuestro estaba recibiendo sus famosos masajes en aceite con Derian.',
+    bio: 'El Pomerania más esponjoso, fino y consentido de Virocentro. Fue secuestrado por Jair y Javier, aunque justo antes del secuestro estaba recibiendo sus famosos masajes relajantes en aceite con Derian.',
     traits: ['200% Esponjoso', 'Fan del Aceite de Derian', 'Alarma Ultrasónica']
   },
   jair: {
@@ -27,7 +27,7 @@ const RESCUE_CHARACTERS = {
     role: 'Jefe Malvado Principal (Secuestrador)',
     color: '#ef4444',
     badge: '😈 Jefe Final',
-    bio: 'El cerebro malvado detrás del secuestro de Jairo. Armó una red de drones y secuaces desde Virocentro pasando por San Jorge hasta atrincherarse en el último piso de Virocasa con la jaula dorada.',
+    bio: 'El cerebro malvado detrás del secuestro de Jairo. Armó un ejército de secuaces y drones desde Virocentro pasando por San Jorge hasta atrincherarse en el último piso de Virocasa con la jaula dorada.',
     traits: ['Jefe Malvado', 'Secuestrador de Jairo', 'Fortaleza en Virocasa']
   },
   javier: {
@@ -37,7 +37,7 @@ const RESCUE_CHARACTERS = {
     color: '#3b82f6',
     badge: '🍿 Jefe del Cine',
     bio: 'El mejor amigo de J con el que siempre va al cine. Sandra asegura que "esos 2 parecen novios" porque no se pierden ni un estreno juntos. Por puros celos de que J no fue al cine con él, se unió a Jair para secuestrar a Jairo.',
-    traits: ['Va al Cine con J', 'Sandra Dice que Son Novios', 'Cañón de Crispetas']
+    traits: ['Va al Cine con J', 'Sandra Dice que Son Novios', 'Cañón de Crispetas VIP']
   },
   gael: {
     id: 'gael',
@@ -54,13 +54,13 @@ const RESCUE_CHARACTERS = {
     role: 'Maestro de los Masajes en Aceite',
     color: '#eab308',
     badge: '🧴 Especialista en Aceite',
-    bio: 'Le da masajes relajantes a Jairo bañándolo en aceite aromático. Cada vez que se encierran con los tarros de aceite, Sandra toca la puerta escandalizada pensando que están haciendo otra cosa muy distinta.',
+    bio: 'Le da masajes relajantes a Jairo bañándolo en aceite aromático tibio. Cada vez que se encierran con los tarros de aceite, Sandra toca la puerta escandalizada pensando que están haciendo otra cosa muy distinta.',
     traits: ['Masajes a Jairo en Aceite', 'Sandra Piensa Mal', 'Piso Resbaloso Turbo']
   },
   sandra: {
     id: 'sandra',
     name: 'Sandra',
-    role: 'Mamá de J (Comandante desde Virocentro)',
+    role: 'Mamá de J (Comandante en Virocentro)',
     color: '#f43f5e',
     badge: '🚨 Alerta Materna',
     bio: 'La mamá de J en Virocentro. Da la voz de alerta cuando secuestran a Jairo, monitorea toda la misión por celular y no deja de repetir que J y Javier parecen novios en el cine y que los masajes en aceite de Derian están muy raros.',
@@ -72,21 +72,21 @@ const RESCUE_UPGRADES = [
   {
     id: 'gael_ring',
     name: '🎥 Aro LED de Gael +1',
-    desc: 'Aumenta el daño y velocidad de los disparos de luz y tokens.',
+    desc: 'Aumenta la potencia de los disparos de J y los rayos de Tokens de Gael.',
     cost: 5,
     icon: '💡'
   },
   {
     id: 'derian_oil',
     name: '🧴 Aceite Turbo de Derian',
-    desc: 'Aumenta la velocidad de movimiento y el salto de J.',
+    desc: 'Aumenta la velocidad de carrera y el impulso del doble salto de J.',
     cost: 5,
     icon: '🧴'
   },
   {
     id: 'sandra_shield',
     name: '🛡️ Bendición de Doña Sandra',
-    desc: 'Añade +1 corazón de vida máxima en todos los niveles.',
+    desc: 'Añade +1 corazón de vida máxima permanente en todos los niveles.',
     cost: 8,
     icon: '❤️'
   }
@@ -208,7 +208,7 @@ const RESCUE_LEVELS = [
     ally: null,
     boss: null,
     slippery: false,
-    length: 2700,
+    length: 2650,
     targetBones: 7,
     introDialogue: [
       {
@@ -226,7 +226,7 @@ const RESCUE_LEVELS = [
       {
         speaker: 'j',
         name: 'J',
-        text: '«¡Veo una luz rosada brillante saliendo de una ventana en San Jorge! ¡Ese tiene que ser el cuarto de transmisión de Gael!»'
+        text: '«¡Veo una luz neón fucsia saliendo de un balcón en San Jorge! ¡Ese tiene que ser el estudio webcam de Gael!»'
       }
     ]
   },
@@ -238,13 +238,13 @@ const RESCUE_LEVELS = [
     ally: 'gael',
     boss: null,
     slippery: false,
-    length: 2800,
+    length: 2750,
     targetBones: 7,
     introDialogue: [
       {
         speaker: 'gael',
         name: 'Gael (Amigo Webcamer)',
-        text: '«¡Bebéee! ¡Estaba en pleno show privado por webcam en San Jorge cuando vi a Jair pasar con Jairo! ¡Apago la cámara y me uno a ti ahora mismo!»'
+        text: '«¡Bebéee! ¡Estaba en pleno show privado por webcam aquí en San Jorge cuando vi a Jair pasar con Jairo! ¡Cierro el stream y me uno a ti ahora mismo!»'
       },
       {
         speaker: 'j',
@@ -254,14 +254,14 @@ const RESCUE_LEVELS = [
       {
         speaker: 'gael',
         name: 'Gael (Aliado Activado)',
-        text: '«¡Tranquilo papi, que con mi Aro de Luz LED y mi Lluvia de Tokens VIP los vamos a dejar ciegos! ¡Presiona [K] o el botón de Poder para mi Flash Webcam!»'
+        text: '«¡Tranquilo papi, que con mi Aro de Luz LED y mi Lluvia de Tokens VIP los vamos a dejar ciegos! ¡Presiona PODER para lanzar nuestro Flash Webcam!»'
       }
     ],
     outroDialogue: [
       {
         speaker: 'gael',
         name: 'Gael',
-        text: '«¡Arrasamos en San Jorge, amor! Y mira el piso de la siguiente cuadra... ¡está lleno de aceite brillante! ¡Ahí está Derian!»'
+        text: '«¡Arrasamos en San Jorge, amor! Y mira el piso de la siguiente cuadra... ¡está lleno de aceite tibio! ¡Ahí está Derian!»'
       }
     ]
   },
@@ -273,7 +273,7 @@ const RESCUE_LEVELS = [
     ally: 'gael',
     boss: {
       id: 'drone_jair',
-      name: 'MEGA-DRON DE JAIR (Secuestrador de Spa)',
+      name: 'MEGA-DRON DE JAIR (Secuestrador del Spa)',
       hp: 22,
       color: '#eab308',
       quote: '«¡Gracias al aceite de Derian, el Pomerania resbaló directo a nuestra jaula!»'
@@ -295,7 +295,7 @@ const RESCUE_LEVELS = [
       {
         speaker: 'derian',
         name: 'Derian',
-        text: '«¡Doña Sandra, le juro que es puro masaje canino! ¡Toma J, embadúrnate los zapatos con mi Aceite Especial: el piso resbala pero correrás al doble de velocidad!»'
+        text: '«¡Doña Sandra, le juro que es puro masaje canino! ¡Toma J, embadúrnate con mi Aceite Especial: el piso resbala pero tendrás velocidad turbo!»'
       }
     ],
     outroDialogue: [
@@ -314,7 +314,7 @@ const RESCUE_LEVELS = [
     ally: 'gael',
     boss: null,
     slippery: true,
-    length: 3100,
+    length: 3000,
     targetBones: 8,
     introDialogue: [
       {
@@ -344,7 +344,7 @@ const RESCUE_LEVELS = [
     ally: 'gael',
     boss: null,
     slippery: false,
-    length: 3200,
+    length: 3100,
     targetBones: 9,
     introDialogue: [
       {
@@ -375,18 +375,18 @@ const RESCUE_LEVELS = [
     boss: {
       id: 'javier_v2',
       name: 'JAVIER RECARGADO (Doble Combo de Cine)',
-      hp: 28,
+      hp: 26,
       color: '#60a5fa',
       quote: '«¡En la sala de Virocasa no pasarás, J! ¡Si no vas a cine conmigo, nadie sale con el Pomerania!»'
     },
     slippery: true,
-    length: 3200,
+    length: 3100,
     targetBones: 9,
     introDialogue: [
       {
         speaker: 'javier',
         name: 'Javier',
-        text: '«¡Sorpresa en la sala de Virocasa! Jair me dio un meca-traje de Cine Colombia y Derian dejó todo el piso lleno de aceite.»'
+        text: '«¡Sorpresa en la sala de Virocasa! Jair me dio un traje blindado de Cine VIP y Derian dejó todo el piso lleno de aceite.»'
       },
       {
         speaker: 'sandra',
@@ -411,12 +411,12 @@ const RESCUE_LEVELS = [
     boss: {
       id: 'jair_final',
       name: 'JAIR (Jefe Supremo del Secuestro)',
-      hp: 40,
+      hp: 38,
       color: '#ef4444',
       quote: '«¡Esta es la batalla final en Virocasa! ¡Con mi armadura suprema ni tú, ni el webcamer Gael, ni los aceites de Derian podrán salvar a Jairo!»'
     },
     slippery: false,
-    length: 3400,
+    length: 3300,
     targetBones: 10,
     introDialogue: [
       {
@@ -455,106 +455,366 @@ const RESCUE_LEVELS = [
   }
 ];
 
-// GENERADOR DE RETRATOS SVG PARA DIÁLOGOS Y EXPEDIENTES
+// ============================================================================
+// ILUSTRACIONES VECTORIALES HD DE PERSONAJES Y SPRITES (UI + MOTOR CANVAS)
+// ============================================================================
 function getRescueCharSVG(charId) {
   switch (charId) {
     case 'j':
-      return `<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <path d="M35 235 C35 162 165 162 165 235 Z" fill="#111827" stroke="#f59e0b" stroke-width="3"/>
-        <rect x="65" y="72" width="70" height="12" rx="5" fill="#ef4444"/>
-        <circle cx="100" cy="105" r="42" fill="#f1c29b" stroke="#f59e0b" stroke-width="2.5"/>
-        <path d="M56 90 C56 48 144 48 144 90 C138 74 62 74 56 90 Z" fill="#271c19"/>
-        <circle cx="84" cy="102" r="4.5" fill="#1c1917"/>
-        <circle cx="118" cy="102" r="4.5" fill="#1c1917"/>
-        <path d="M80 120 Q100 113 120 120 Q123 139 100 145 Q77 139 80 120 Z" fill="none" stroke="#291d18" stroke-width="5.5"/>
-        <path d="M85 123 Q100 135 115 123 Z" fill="#ffffff"/>
+      return `<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="jSkin" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f6cfa8"/>
+            <stop offset="100%" stop-color="#e0a97b"/>
+          </linearGradient>
+          <linearGradient id="jJacket" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#1e293b"/>
+            <stop offset="50%" stop-color="#0f172a"/>
+            <stop offset="100%" stop-color="#090d16"/>
+          </linearGradient>
+          <linearGradient id="jGold" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#fde047"/>
+            <stop offset="100%" stop-color="#d97706"/>
+          </linearGradient>
+        </defs>
+        <!-- Aura Heroica -->
+        <circle cx="110" cy="130" r="88" fill="#f59e0b" opacity="0.14"/>
+        <!-- Capa/Bufanda Roja de Rescate ondeando -->
+        <path d="M55 152 Q20 175 14 218 Q45 215 68 188 Z" fill="#dc2626"/>
+        <!-- Torso Chaqueta Táctica de Cuero -->
+        <path d="M36 250 C36 168 184 168 184 250 Z" fill="url(#jJacket)" stroke="url(#jGold)" stroke-width="3.5"/>
+        <!-- Cuello alto y solapas -->
+        <polygon points="68,158 95,212 80,224 52,175" fill="#334155" stroke="#fbbf24" stroke-width="1.5"/>
+        <polygon points="152,158 125,212 140,224 168,175" fill="#334155" stroke="#fbbf24" stroke-width="1.5"/>
+        <!-- Camiseta interior y placa dorada -->
+        <polygon points="86,168 110,222 134,168" fill="#dc2626"/>
+        <circle cx="110" cy="192" r="8" fill="url(#jGold)"/>
+        <!-- Cuello -->
+        <rect x="94" y="138" width="32" height="32" rx="10" fill="#d99f72"/>
+        <!-- Orejas -->
+        <ellipse cx="62" cy="108" rx="9" ry="15" fill="url(#jSkin)" stroke="#c68b59" stroke-width="2"/>
+        <ellipse cx="158" cy="108" rx="9" ry="15" fill="url(#jSkin)" stroke="#c68b59" stroke-width="2"/>
+        <!-- Rostro definido -->
+        <path d="M64 86 C64 52 156 52 156 86 C156 126 138 152 110 154 C82 152 64 126 64 86 Z" fill="url(#jSkin)" stroke="#b47b4d" stroke-width="2"/>
+        <!-- Banda Roja de Rescate en la frente -->
+        <path d="M63 82 Q110 92 157 82 L159 95 Q110 105 61 95 Z" fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
+        <path d="M154 88 Q185 82 196 104 Q175 108 156 96 Z" fill="#dc2626"/>
+        <!-- Cabello estilizado con volumen y brillo -->
+        <path d="M58 84 C52 38 92 24 116 28 C144 24 170 46 162 84 C150 66 132 62 110 64 C86 62 70 68 58 84 Z" fill="#1c1613"/>
+        <path d="M68 62 L78 85 L92 66 L108 86 L122 65 L136 84 L148 64" fill="#1c1613"/>
+        <path d="M78 44 Q108 34 138 46" fill="none" stroke="#443833" stroke-width="4" stroke-linecap="round"/>
+        <!-- Cejas decididas -->
+        <path d="M76 96 L99 101" stroke="#1c1613" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M144 96 L121 101" stroke="#1c1613" stroke-width="4.5" stroke-linecap="round"/>
+        <!-- Ojos con brillo anime/arcade -->
+        <ellipse cx="89" cy="109" rx="7" ry="6.5" fill="#ffffff"/>
+        <ellipse cx="131" cy="109" rx="7" ry="6.5" fill="#ffffff"/>
+        <circle cx="90" cy="109" r="5" fill="#291d16"/>
+        <circle cx="130" cy="109" r="5" fill="#291d16"/>
+        <circle cx="88" cy="107" r="2" fill="#ffffff"/>
+        <circle cx="128" cy="107" r="2" fill="#ffffff"/>
+        <!-- Nariz sombreada -->
+        <path d="M110 106 L106 121 L113 123" fill="none" stroke="#b47b4d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Barba / Candado moderno bien perfilado -->
+        <path d="M66 116 C68 140 88 154 110 155 C132 154 152 140 154 116 C148 134 132 144 110 145 C88 144 72 134 66 116 Z" fill="#1f1714" opacity="0.9"/>
+        <path d="M88 130 Q110 123 132 130 Q134 146 110 151 Q86 146 88 130 Z" fill="none" stroke="#1f1714" stroke-width="5"/>
+        <!-- Sonrisa confiada -->
+        <path d="M95 133 Q110 143 125 132 Z" fill="#ffffff"/>
       </svg>`;
 
     case 'jairo':
-      return `<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="150" r="58" fill="#f59e0b" stroke="#fde68a" stroke-width="4"/>
-        <circle cx="65" cy="125" r="35" fill="#fbbf24"/>
-        <circle cx="135" cy="125" r="35" fill="#fbbf24"/>
-        <circle cx="100" cy="115" r="46" fill="#fbbf24" stroke="#fef3c7" stroke-width="3"/>
-        <polygon points="62,84 74,48 92,76" fill="#d97706" stroke="#fde68a" stroke-width="2"/>
-        <polygon points="138,84 126,48 108,76" fill="#d97706" stroke="#fde68a" stroke-width="2"/>
-        <ellipse cx="100" cy="162" rx="34" ry="26" fill="#fffbeb"/>
-        <circle cx="84" cy="108" r="6" fill="#1e293b"/>
-        <circle cx="116" cy="108" r="6" fill="#1e293b"/>
-        <circle cx="86" cy="106" r="2" fill="#fff"/>
-        <circle cx="118" cy="106" r="2" fill="#fff"/>
-        <ellipse cx="100" cy="118" rx="7" ry="5" fill="#1e293b"/>
-        <path d="M94 127 Q100 142 106 127 Z" fill="#fb7185"/>
+      return `<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="pomFur" cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stop-color="#fde68a"/>
+            <stop offset="55%" stop-color="#fbbf24"/>
+            <stop offset="100%" stop-color="#d97706"/>
+          </radialGradient>
+          <radialGradient id="pomCream" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#fef3c7"/>
+          </radialGradient>
+        </defs>
+        <!-- Aura Dorada -->
+        <circle cx="110" cy="138" r="86" fill="#fbbf24" opacity="0.18"/>
+        <!-- Capa Roja Real de Jairo -->
+        <path d="M44 170 Q20 218 18 246 L202 246 Q200 218 176 170 Z" fill="#dc2626" stroke="#fde047" stroke-width="3"/>
+        <!-- Cuerpo esponjoso multicapa -->
+        <circle cx="110" cy="176" r="58" fill="url(#pomFur)" stroke="#b45309" stroke-width="2.5"/>
+        <circle cx="64" cy="136" r="38" fill="url(#pomFur)"/>
+        <circle cx="156" cy="136" r="38" fill="url(#pomFur)"/>
+        <circle cx="74" cy="96" r="32" fill="url(#pomFur)"/>
+        <circle cx="146" cy="96" r="32" fill="url(#pomFur)"/>
+        <!-- Orejitas peludas de Pomerania -->
+        <polygon points="56,82 68,34 98,68" fill="#d97706" stroke="#fef3c7" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="64,76 70,46 89,68" fill="#fda4af"/>
+        <polygon points="164,82 152,34 122,68" fill="#d97706" stroke="#fef3c7" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="156,76 150,46 131,68" fill="#fda4af"/>
+        <!-- Cabeza central esponjosa -->
+        <circle cx="110" cy="118" r="52" fill="url(#pomFur)" stroke="#fef3c7" stroke-width="2.5"/>
+        <!-- Pecho blanco esponjoso en forma de nube -->
+        <path d="M68 168 Q60 198 86 210 Q110 222 134 210 Q160 198 152 168 Q132 152 110 156 Q88 152 68 168 Z" fill="url(#pomCream)"/>
+        <!-- Collar VIP con Medalla Dorada -->
+        <path d="M72 158 Q110 174 148 158" fill="none" stroke="#ef4444" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="110" cy="172" r="11" fill="#fde047" stroke="#b45309" stroke-width="2.5"/>
+        <text x="110" y="176" text-anchor="middle" font-size="10" font-weight="900" fill="#78350f">J</text>
+        <!-- Mejillas sonrojadas -->
+        <ellipse cx="78" cy="124" rx="10" ry="6" fill="#fb7185" opacity="0.55"/>
+        <ellipse cx="142" cy="124" rx="10" ry="6" fill="#fb7185" opacity="0.55"/>
+        <!-- Ojos grandes y brillantes kawaii -->
+        <circle cx="88" cy="110" r="9.5" fill="#1e1b4b"/>
+        <circle cx="132" cy="110" r="9.5" fill="#1e1b4b"/>
+        <circle cx="85" cy="106" r="3.5" fill="#ffffff"/>
+        <circle cx="129" cy="106" r="3.5" fill="#ffffff"/>
+        <circle cx="91" cy="113" r="1.8" fill="#ffffff"/>
+        <circle cx="135" cy="113" r="1.8" fill="#ffffff"/>
+        <!-- Hocico crema y nariz -->
+        <ellipse cx="110" cy="124" rx="16" ry="12" fill="#fffbeb"/>
+        <ellipse cx="110" cy="119" rx="7.5" ry="5.5" fill="#1e293b"/>
+        <ellipse cx="108" cy="117.5" rx="2.5" ry="1.5" fill="#94a3b8"/>
+        <!-- Boquita feliz y lengüita rosada -->
+        <path d="M101 128 Q106 144 110 144 Q114 144 119 128 Z" fill="#f43f5e" stroke="#9f1239" stroke-width="1.5"/>
+        <path d="M98 126 Q104 132 110 126 Q116 132 122 126" fill="none" stroke="#1e293b" stroke-width="2.8" stroke-linecap="round"/>
+        <!-- Patitas delanteras -->
+        <ellipse cx="82" cy="226" rx="16" ry="12" fill="url(#pomCream)" stroke="#d97706" stroke-width="2"/>
+        <ellipse cx="138" cy="226" rx="16" ry="12" fill="url(#pomCream)" stroke="#d97706" stroke-width="2"/>
       </svg>`;
 
     case 'jair':
-      return `<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <path d="M28 235 C28 156 172 156 172 235 Z" fill="#1f2937" stroke="#ef4444" stroke-width="3.5"/>
-        <polygon points="60,165 100,210 140,165" fill="#991b1b"/>
-        <circle cx="100" cy="104" r="42" fill="#e5b899" stroke="#ef4444" stroke-width="2.5"/>
-        <path d="M56 90 C54 45 146 45 144 90 Z" fill="#111827"/>
-        <path d="M70 88 L94 98 M130 88 L106 98" stroke="#111827" stroke-width="4.5" stroke-linecap="round"/>
-        <circle cx="83" cy="103" r="5" fill="#dc2626"/>
-        <circle cx="117" cy="103" r="5" fill="#dc2626"/>
-        <path d="M78 126 Q100 115 122 126" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+      return `<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="jairArmor" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#374151"/>
+            <stop offset="50%" stop-color="#111827"/>
+            <stop offset="100%" stop-color="#030712"/>
+          </linearGradient>
+          <linearGradient id="jairCrimson" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ef4444"/>
+            <stop offset="100%" stop-color="#7f1d1d"/>
+          </linearGradient>
+        </defs>
+        <!-- Aura oscura carmesí -->
+        <circle cx="110" cy="130" r="88" fill="#ef4444" opacity="0.18"/>
+        <!-- Capa de Villano con cuello alto -->
+        <path d="M24 250 L44 136 L110 156 L176 136 L196 250 Z" fill="#450a0a" stroke="#dc2626" stroke-width="2.5"/>
+        <!-- Armadura cibernética y hombreras -->
+        <path d="M30 250 C30 164 190 164 190 250 Z" fill="url(#jairArmor)" stroke="#ef4444" stroke-width="3.5"/>
+        <polygon points="22,176 68,154 76,192 34,205" fill="url(#jairCrimson)" stroke="#fca5a5" stroke-width="2"/>
+        <polygon points="198,176 152,154 144,192 186,205" fill="url(#jairCrimson)" stroke="#fca5a5" stroke-width="2"/>
+        <!-- Núcleo de energía en el pecho -->
+        <polygon points="90,180 110,168 130,180 110,222" fill="#ef4444" stroke="#fecaca" stroke-width="2"/>
+        <!-- Cuello -->
+        <rect x="94" y="138" width="32" height="28" fill="#c09070"/>
+        <!-- Rostro afilado de villano -->
+        <path d="M64 84 C64 48 156 48 156 84 C156 125 138 152 110 155 C82 152 64 125 64 84 Z" fill="#e2b494" stroke="#991b1b" stroke-width="2"/>
+        <!-- Cicatriz en el ojo izquierdo -->
+        <line x1="128" y1="82" x2="136" y2="124" stroke="#991b1b" stroke-width="3" stroke-linecap="round"/>
+        <!-- Cabello negro en picos hacia atrás -->
+        <path d="M58 88 C52 34 90 18 110 22 C130 18 168 34 162 88 C148 64 126 58 110 64 C94 58 72 64 58 88 Z" fill="#090d16"/>
+        <polygon points="95,22 110,4 125,24" fill="#ef4444"/>
+        <!-- Cejas furiosas -->
+        <path d="M72 90 L102 103" stroke="#090d16" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M148 90 L118 103" stroke="#090d16" stroke-width="5.5" stroke-linecap="round"/>
+        <!-- Ojos rojos brillantes -->
+        <polygon points="76,104 98,107 94,114 78,112" fill="#ef4444"/>
+        <polygon points="144,104 122,107 126,114 142,112" fill="#ef4444"/>
+        <circle cx="88" cy="109" r="2.2" fill="#ffffff"/>
+        <circle cx="132" cy="109" r="2.2" fill="#ffffff"/>
+        <!-- Barba candado afilada -->
+        <path d="M88 134 L110 155 L132 134 L124 148 L110 152 L96 148 Z" fill="#090d16"/>
+        <!-- Sonrisa malvada -->
+        <path d="M86 128 Q110 138 134 126 Q124 142 110 142 Q96 142 86 128 Z" fill="#ffffff" stroke="#111827" stroke-width="2"/>
       </svg>`;
 
     case 'javier':
-      return `<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <path d="M32 235 C32 160 168 160 168 235 Z" fill="#1e3a8a" stroke="#60a5fa" stroke-width="3"/>
-        <circle cx="100" cy="104" r="41" fill="#f3c6a0" stroke="#60a5fa" stroke-width="2.5"/>
-        <path d="M58 88 C58 46 142 46 142 88 Z" fill="#1e293b"/>
-        <!-- Gafas 3D de Cine -->
-        <rect x="64" y="92" width="32" height="18" rx="4" fill="#ef4444" opacity="0.85" stroke="#fff" stroke-width="2"/>
-        <rect x="104" y="92" width="32" height="18" rx="4" fill="#3b82f6" opacity="0.85" stroke="#fff" stroke-width="2"/>
-        <line x1="96" y1="101" x2="104" y2="101" stroke="#fff" stroke-width="2.5"/>
-        <path d="M84 124 Q100 136 116 124 Z" fill="#fff"/>
-        <!-- Caja de crispetas -->
-        <rect x="135" y="168" width="36" height="46" rx="4" fill="#dc2626" stroke="#fde047" stroke-width="2"/>
-        <circle cx="145" cy="164" r="8" fill="#fef08a"/>
-        <circle cx="155" cy="162" r="9" fill="#fde047"/>
-        <circle cx="164" cy="165" r="7" fill="#fef08a"/>
+      return `<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="javJacket" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#1e1b4b"/>
+          </linearGradient>
+        </defs>
+        <!-- Aura Azul Cine VIP -->
+        <circle cx="110" cy="130" r="88" fill="#3b82f6" opacity="0.16"/>
+        <!-- Chaqueta Bomber Varsity de Cine -->
+        <path d="M34 250 C34 166 186 166 186 250 Z" fill="url(#javJacket)" stroke="#60a5fa" stroke-width="3.5"/>
+        <!-- Franjas blancas/amarillas de chaqueta bomber -->
+        <path d="M78 164 L110 218 L142 164" fill="#eff6ff" stroke="#fde047" stroke-width="3"/>
+        <rect x="94" y="138" width="32" height="30" fill="#e0ab82"/>
+        <!-- Rostro simpático/celoso -->
+        <path d="M65 86 C65 50 155 50 155 86 C155 126 138 150 110 152 C82 150 65 126 65 86 Z" fill="#f3c6a0" stroke="#c68b59" stroke-width="2"/>
+        <!-- Cabello moderno ondulado -->
+        <path d="M60 86 C56 38 92 26 118 28 C146 30 164 50 158 86 C144 64 82 62 60 86 Z" fill="#1e293b"/>
+        <!-- GAFAS 3D DE CINE (Rojo y Cian con marco blanco brillante) -->
+        <rect x="64" y="92" width="42" height="24" rx="5" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+        <rect x="114" y="92" width="42" height="24" rx="5" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+        <rect x="104" y="98" width="12" height="7" fill="#ffffff"/>
+        <rect x="68" y="95" width="34" height="18" rx="3" fill="#ef4444" opacity="0.88"/>
+        <rect x="118" y="95" width="34" height="18" rx="3" fill="#06b6d4" opacity="0.88"/>
+        <!-- Brillo en los lentes 3D -->
+        <line x1="72" y1="110" x2="84" y2="97" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+        <line x1="122" y1="110" x2="134" y2="97" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+        <!-- Sonrisa de "vamos a cine, J" -->
+        <path d="M88 126 Q110 142 132 126 Z" fill="#ffffff" stroke="#7c2d12" stroke-width="2"/>
+        <!-- Balde Gigante de Crispetas VIP -->
+        <g transform="translate(132, 162)">
+          <circle cx="14" cy="4" r="10" fill="#fef08a" stroke="#eab308" stroke-width="1.5"/>
+          <circle cx="28" cy="0" r="12" fill="#fde047" stroke="#eab308" stroke-width="1.5"/>
+          <circle cx="44" cy="4" r="10" fill="#fef08a" stroke="#eab308" stroke-width="1.5"/>
+          <polygon points="4,8 52,8 46,66 10,66" fill="#dc2626" stroke="#fde047" stroke-width="2.5"/>
+          <rect x="16" y="10" width="8" height="54" fill="#ffffff"/>
+          <rect x="32" y="10" width="8" height="54" fill="#ffffff"/>
+        </g>
       </svg>`;
 
     case 'gael':
-      return `<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <!-- Aro de luz LED detrás -->
-        <circle cx="100" cy="105" r="64" fill="none" stroke="#ec4899" stroke-width="7" opacity="0.85"/>
-        <circle cx="100" cy="105" r="58" fill="none" stroke="#f9a8d4" stroke-width="3"/>
-        <path d="M36 235 C36 164 164 164 164 235 Z" fill="#831843" stroke="#f472b6" stroke-width="3"/>
-        <circle cx="100" cy="104" r="40" fill="#f7d3b5" stroke="#f472b6" stroke-width="2.5"/>
-        <path d="M58 88 C60 44 140 44 142 88 C126 68 74 68 58 88 Z" fill="#db2777"/>
-        <ellipse cx="76" cy="112" rx="8" ry="4.5" fill="#fb7185" opacity="0.6"/>
-        <ellipse cx="124" cy="112" rx="8" ry="4.5" fill="#fb7185" opacity="0.6"/>
-        <circle cx="83" cy="101" r="4.5" fill="#1c1917"/>
-        <circle cx="117" cy="101" r="4.5" fill="#1c1917"/>
-        <path d="M86 122 Q100 134 114 122 Z" fill="#f43f5e"/>
+      return `<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gaelNeon" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#f472b6"/>
+            <stop offset="50%" stop-color="#ec4899"/>
+            <stop offset="100%" stop-color="#a855f7"/>
+          </linearGradient>
+        </defs>
+        <!-- ARO DE LUZ LED PROFESIONAL DETRÁS -->
+        <circle cx="110" cy="112" r="82" fill="none" stroke="url(#gaelNeon)" stroke-width="11" opacity="0.9"/>
+        <circle cx="110" cy="112" r="82" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.85"/>
+        <!-- Destellos de Tokens y Diamantes -->
+        <polygon points="32,60 36,48 40,60 52,64 40,68 36,80 32,68 20,64" fill="#fde047"/>
+        <polygon points="184,56 188,46 192,56 202,60 192,64 188,74 184,64 174,60" fill="#38bdf8"/>
+        <!-- Outfit Glam Streamer en San Jorge -->
+        <path d="M38 250 C38 168 182 168 182 250 Z" fill="url(#gaelNeon)" stroke="#fbcfe8" stroke-width="3"/>
+        <polygon points="82,166 110,226 138,166" fill="#1e1b4b"/>
+        <!-- Collar brillante -->
+        <path d="M90 174 Q110 190 130 174" fill="none" stroke="#fde047" stroke-width="3.5"/>
+        <rect x="96" y="138" width="28" height="30" fill="#f5cba7"/>
+        <!-- Rostro estilizado impecable -->
+        <path d="M68 88 C68 52 152 52 152 88 C152 126 136 150 110 152 C84 150 68 126 68 88 Z" fill="#f7d5b6" stroke="#f472b6" stroke-width="2"/>
+        <!-- Rubor glam -->
+        <ellipse cx="80" cy="116" rx="10" ry="5" fill="#fb7185" opacity="0.65"/>
+        <ellipse cx="140" cy="116" rx="10" ry="5" fill="#fb7185" opacity="0.65"/>
+        <!-- Diadema de Auriculares Streamer Rosa/Cian -->
+        <path d="M56 102 C54 34 166 34 164 102" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round"/>
+        <rect x="46" y="90" width="16" height="32" rx="8" fill="#ec4899" stroke="#ffffff" stroke-width="2"/>
+        <rect x="158" y="90" width="16" height="32" rx="8" fill="#ec4899" stroke="#ffffff" stroke-width="2"/>
+        <!-- Cabello con mechas fucsia y platinadas -->
+        <path d="M64 88 C62 40 100 28 124 34 C150 38 160 62 154 88 C138 62 96 58 64 88 Z" fill="#831843"/>
+        <path d="M76 52 Q112 36 142 64" fill="none" stroke="#f472b6" stroke-width="6" stroke-linecap="round"/>
+        <!-- Cejas perfiladas y ojos expresivos con pestañas -->
+        <path d="M76 92 Q88 86 98 92" fill="none" stroke="#4a044e" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M122 92 Q132 86 144 92" fill="none" stroke="#4a044e" stroke-width="3.2" stroke-linecap="round"/>
+        <circle cx="88" cy="105" r="6" fill="#1e1b4b"/>
+        <circle cx="132" cy="105" r="6" fill="#1e1b4b"/>
+        <circle cx="86" cy="103" r="2.2" fill="#ffffff"/>
+        <circle cx="130" cy="103" r="2.2" fill="#ffffff"/>
+        <!-- Guiño / Sonrisa brillante -->
+        <path d="M94 126 Q110 139 126 126 Z" fill="#e11d48" stroke="#fda4af" stroke-width="1.5"/>
       </svg>`;
 
     case 'derian':
-      return `<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <!-- Gotas de aceite dorado -->
-        <circle cx="45" cy="95" r="10" fill="#facc15" opacity="0.8"/>
-        <circle cx="158" cy="110" r="12" fill="#eab308" opacity="0.8"/>
-        <path d="M34 235 C34 162 166 162 166 235 Z" fill="#713f12" stroke="#facc15" stroke-width="3"/>
-        <circle cx="100" cy="104" r="41" fill="#e5b899" stroke="#facc15" stroke-width="2.5"/>
-        <path d="M58 88 C58 46 142 46 142 88 Z" fill="#292524"/>
-        <circle cx="83" cy="102" r="4.5" fill="#1c1917"/>
-        <circle cx="117" cy="102" r="4.5" fill="#1c1917"/>
-        <path d="M84 122 Q100 133 116 122" fill="none" stroke="#fef08a" stroke-width="3.5" stroke-linecap="round"/>
-        <!-- Frasco de aceite -->
-        <rect x="138" y="162" width="28" height="44" rx="8" fill="#eab308" stroke="#fef08a" stroke-width="2"/>
+      return `<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="oilGold" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fef08a"/>
+            <stop offset="50%" stop-color="#eab308"/>
+            <stop offset="100%" stop-color="#a16207"/>
+          </linearGradient>
+        </defs>
+        <!-- Aura Dorada de Aceite -->
+        <circle cx="110" cy="130" r="88" fill="#eab308" opacity="0.18"/>
+        <!-- Gotas de Aceite Dorado flotando -->
+        <path d="M36 80 Q26 98 36 106 Q46 98 36 80 Z" fill="url(#oilGold)"/>
+        <path d="M184 68 Q172 88 184 98 Q196 88 184 68 Z" fill="url(#oilGold)"/>
+        <!-- Chaleco de Spa / Masajista Abierto con Brillo de Aceite -->
+        <path d="M34 250 C34 166 186 166 186 250 Z" fill="#422006" stroke="url(#oilGold)" stroke-width="3.5"/>
+        <!-- Pecho bronceado y brillante por el aceite -->
+        <polygon points="82,162 110,235 138,162" fill="#d99b66"/>
+        <ellipse cx="104" cy="192" rx="6" ry="14" fill="#fef08a" opacity="0.35"/>
+        <rect x="94" y="138" width="32" height="30" fill="#d99b66"/>
+        <!-- Rostro seductor / relajado -->
+        <path d="M66 86 C66 50 154 50 154 86 C154 126 136 150 110 152 C84 150 66 126 66 86 Z" fill="#e5ab78" stroke="#a16207" stroke-width="2"/>
+        <!-- Cabello ondulado con brillo -->
+        <path d="M60 88 C56 38 94 26 116 28 C148 30 162 52 158 88 C144 64 80 64 60 88 Z" fill="#1c1917"/>
+        <path d="M74 94 Q88 89 98 94" fill="none" stroke="#1c1917" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M122 92 Q134 85 145 92" fill="none" stroke="#1c1917" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="88" cy="105" r="5.5" fill="#1c1917"/>
+        <circle cx="132" cy="105" r="5.5" fill="#1c1917"/>
+        <circle cx="86" cy="103" r="2" fill="#ffffff"/>
+        <circle cx="130" cy="103" r="2" fill="#ffffff"/>
+        <path d="M90 126 Q110 138 130 126" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+        <!-- Frasco de Aceite de Masajes VIP -->
+        <g transform="translate(142, 165)">
+          <rect x="14" y="0" width="14" height="10" rx="3" fill="#fde047"/>
+          <rect x="4" y="10" width="34" height="52" rx="10" fill="url(#oilGold)" stroke="#ffffff" stroke-width="2"/>
+          <text x="21" y="40" text-anchor="middle" font-size="9" font-weight="900" fill="#422006">OIL</text>
+        </g>
       </svg>`;
 
     case 'sandra':
-      return `<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <path d="M36 235 C36 166 164 166 164 235 Z" fill="#e11d48" stroke="#fecdd3" stroke-width="3"/>
-        <circle cx="100" cy="108" r="42" fill="#fbd38d" stroke="#f43f5e" stroke-width="3"/>
-        <path d="M56 100 C54 55 146 55 144 100 Z" fill="#451a03"/>
-        <path d="M74 94 L92 99 M126 94 L108 99" stroke="#451a03" stroke-width="3.5" stroke-linecap="round"/>
-        <circle cx="84" cy="106" r="4.5" fill="#0f172a"/>
-        <circle cx="116" cy="106" r="4.5" fill="#0f172a"/>
-        <path d="M88 129 Q100 122 112 129" fill="none" stroke="#881337" stroke-width="3.5" stroke-linecap="round"/>
+      return `<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sandraDress" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#f43f5e"/>
+            <stop offset="100%" stop-color="#9f1239"/>
+          </linearGradient>
+        </defs>
+        <circle cx="110" cy="130" r="88" fill="#f43f5e" opacity="0.16"/>
+        <!-- Cabello elegante con volumen de mamá -->
+        <circle cx="62" cy="106" r="32" fill="#451a03"/>
+        <circle cx="158" cy="106" r="32" fill="#451a03"/>
+        <circle cx="110" cy="64" r="44" fill="#451a03"/>
+        <!-- Blusa elegante roja y collar de perlas -->
+        <path d="M36 250 C36 168 184 168 184 250 Z" fill="url(#sandraDress)" stroke="#fecdd3" stroke-width="3"/>
+        <circle cx="88" cy="172" r="5" fill="#ffffff"/>
+        <circle cx="102" cy="177" r="5" fill="#ffffff"/>
+        <circle cx="118" cy="177" r="5" fill="#ffffff"/>
+        <circle cx="132" cy="172" r="5" fill="#ffffff"/>
+        <rect x="96" y="138" width="28" height="28" fill="#f3c6a0"/>
+        <!-- Aretes de oro -->
+        <circle cx="62" cy="120" r="6" fill="#fbbf24"/>
+        <circle cx="158" cy="120" r="6" fill="#fbbf24"/>
+        <!-- Rostro -->
+        <path d="M68 88 C68 54 152 54 152 88 C152 126 136 150 110 152 C84 150 68 126 68 88 Z" fill="#f7d3b0" stroke="#e11d48" stroke-width="2"/>
+        <path d="M64 86 C64 46 156 46 156 86 C138 66 82 66 64 86 Z" fill="#5c2406"/>
+        <!-- Cejas arqueadas de sospecha materna -->
+        <path d="M74 92 L98 99" stroke="#3b1502" stroke-width="4" stroke-linecap="round"/>
+        <path d="M146 92 L122 99" stroke="#3b1502" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="88" cy="106" r="5.5" fill="#1c1917"/>
+        <circle cx="132" cy="106" r="5.5" fill="#1c1917"/>
+        <circle cx="86" cy="104" r="2" fill="#ffffff"/>
+        <circle cx="130" cy="104" r="2" fill="#ffffff"/>
+        <path d="M92 129 Q110 121 128 129" fill="none" stroke="#be123c" stroke-width="4" stroke-linecap="round"/>
+      </svg>`;
+
+    case 'thug':
+      return `<svg viewBox="0 0 140 180" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 175 C22 112 118 112 118 175 Z" fill="#1f2937" stroke="#ef4444" stroke-width="3"/>
+        <circle cx="70" cy="68" r="32" fill="#d6a27c" stroke="#111827" stroke-width="2.5"/>
+        <path d="M36 58 C36 24 104 24 104 58 Z" fill="#111827"/>
+        <rect x="44" y="58" width="52" height="14" rx="4" fill="#090d16" stroke="#ef4444" stroke-width="1.8"/>
+        <path d="M56 86 Q70 78 84 86" fill="none" stroke="#111827" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>`;
+
+    case 'usher':
+      return `<svg viewBox="0 0 140 180" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 175 C22 112 118 112 118 175 Z" fill="#991b1b" stroke="#fde047" stroke-width="3"/>
+        <polygon points="55,118 70,132 85,118" fill="#fde047"/>
+        <circle cx="70" cy="68" r="32" fill="#e5b899" stroke="#fde047" stroke-width="2"/>
+        <rect x="42" y="30" width="56" height="20" rx="4" fill="#dc2626" stroke="#fde047" stroke-width="2"/>
+        <rect x="44" y="60" width="24" height="14" rx="3" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+        <rect x="72" y="60" width="24" height="14" rx="3" fill="#3b82f6" stroke="#fff" stroke-width="1.5"/>
+      </svg>`;
+
+    case 'drone':
+    case 'drone_jair':
+      return `<svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="80" cy="75" rx="52" ry="28" fill="#1e293b" stroke="#f59e0b" stroke-width="3.5"/>
+        <ellipse cx="32" cy="42" rx="26" ry="6" fill="#38bdf8" opacity="0.8"/>
+        <ellipse cx="128" cy="42" rx="26" ry="6" fill="#38bdf8" opacity="0.8"/>
+        <line x1="42" y1="42" x2="54" y2="62" stroke="#94a3b8" stroke-width="5"/>
+        <line x1="118" y1="42" x2="106" y2="62" stroke="#94a3b8" stroke-width="5"/>
+        <circle cx="80" cy="75" r="16" fill="#ef4444" stroke="#fca5a5" stroke-width="3"/>
+        <circle cx="75" cy="70" r="4" fill="#ffffff"/>
       </svg>`;
 
     default:
